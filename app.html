@@ -405,21 +405,21 @@ function bottleSVG(v,h=340,mini=false){
   const band = v.tipo==="tinto" ? "#7A2231" : "#C7A94B";
   const txt = v.tipo==="tinto" ? "#12291D" : "#F4F0E6";
   const sub = v.tipo==="tinto" ? "#7A2231" : "#C7D8A7";
-  const sheen = v.tipo==="tinto" ? "rgba(199,216,167,.18)" : "rgba(255,255,255,.5)";
-  const labelH = mini ? 66 : 92;
+  const sheen = v.tipo==="tinto" ? "rgba(199,216,167,.16)" : "rgba(255,255,255,.55)";
+  const labelH = mini ? 70 : 92;
   const detail = mini ? "" : `
-    <text x="50" y="182" text-anchor="middle" font-family="Fraunces,serif" font-size="14" letter-spacing="4" fill="${txt}">VINA</text>
-    <line x1="33" y1="192" x2="67" y2="192" stroke="${sub}" stroke-width=".8"/>
-    <text x="50" y="208" text-anchor="middle" font-family="Work Sans,sans-serif" font-size="7.5" letter-spacing="1" fill="${sub}">${esc(v.do.toUpperCase().slice(0,18))}</text>
-    <text x="50" y="222" text-anchor="middle" font-family="Work Sans,sans-serif" font-size="7" letter-spacing="1.5" fill="${txt}" opacity=".7">${v.anio}</text>`;
-  return `<svg viewBox="0 0 100 340" height="${h}" xmlns="http://www.w3.org/2000/svg" aria-label="Botella de ${esc(v.n)}">
-    <ellipse cx="50" cy="328" rx="25" ry="5" fill="rgba(20,22,19,.1)"/>
-    <path d="M42 10 h16 v14 c0 6 1 10 3 15 l6 18 c3 9 4 17 4 26 v212 c0 15 -10 27 -21 27 s-21 -12 -21 -27 V83 c0 -9 1 -17 4 -26 l6 -18 c2 -5 3 -9 3 -15 z"
+    <text x="65" y="202" text-anchor="middle" font-family="Fraunces,serif" font-size="15" letter-spacing="4" fill="${txt}">VINA</text>
+    <line x1="46" y1="212" x2="84" y2="212" stroke="${sub}" stroke-width=".8"/>
+    <text x="65" y="228" text-anchor="middle" font-family="Work Sans,sans-serif" font-size="8" letter-spacing="1" fill="${sub}">${esc(v.do.toUpperCase().slice(0,18))}</text>
+    <text x="65" y="242" text-anchor="middle" font-family="Work Sans,sans-serif" font-size="7.5" letter-spacing="1.5" fill="${txt}" opacity=".7">${v.anio}</text>`;
+  return `<svg viewBox="0 0 130 340" height="${h}" xmlns="http://www.w3.org/2000/svg" aria-label="Botella de ${esc(v.n)}">
+    <ellipse cx="65" cy="330" rx="32" ry="6" fill="rgba(20,22,19,.1)"/>
+    <path d="M55 10 L75 10 L75 34 C75 42 76 48 79 54 L79 64 C79 78 94 84 97 100 L97 302 C97 316 86 326 65 326 C44 326 33 316 33 302 L33 100 C36 84 51 78 51 64 L51 54 C54 48 55 42 55 34 Z"
       fill="${glass}" stroke="${stroke}" stroke-width="1.4"/>
-    <path d="M36 96 v200" stroke="${sheen}" stroke-width="3" stroke-linecap="round"/>
-    <rect x="38" y="10" width="24" height="26" rx="1" fill="${band}"/>
-    <rect x="24" y="150" width="52" height="${labelH}" rx="1.5" fill="${label}"/>
-    <rect x="24" y="${150+labelH-7}" width="52" height="7" fill="${band}"/>
+    <path d="M43 112 L43 296" stroke="${sheen}" stroke-width="4" stroke-linecap="round"/>
+    <rect x="51" y="10" width="28" height="32" rx="1" fill="${band}"/>
+    <rect x="38" y="170" width="54" height="${labelH}" rx="1.5" fill="${label}"/>
+    <rect x="38" y="${170+labelH-7}" width="54" height="7" fill="${band}"/>
     ${detail}
   </svg>`;
 }
@@ -432,9 +432,18 @@ function tryLogin(){
   if((u==="ana"||u==="ana@email.com")&&p==="vina") enter();
   else $("loginError").textContent="No coinciden. Prueba ana / vina o usa la cuenta de ejemplo.";
 }
-function enter(){$("loginView").style.display="none";$("appView").style.display="block";render("viaje")}
+function enter(){
+  $("loginView").style.display="none";$("appView").style.display="block";
+  try{sessionStorage.setItem("vina_demo","1")}catch(e){}
+  const p=(location.hash||"").replace("#","");
+  goTab(["viaje","dos","vinos","uvas","bodegas","paladar","cuenta"].includes(p)?p:"viaje");
+}
 $("lp").addEventListener("keydown",e=>{if(e.key==="Enter")tryLogin()});
-function logout(){$("appView").style.display="none";$("loginView").style.display="flex";$("lu").value="";$("lp").value=""}
+function logout(){
+  try{sessionStorage.removeItem("vina_demo")}catch(e){}
+  history.replaceState(null,"",location.pathname);
+  $("appView").style.display="none";$("loginView").style.display="flex";$("lu").value="";$("lp").value="";
+}
 
 $("tabs").addEventListener("click",e=>{
   const b=e.target.closest("button");if(!b)return;
@@ -446,6 +455,7 @@ function goTab(p){
   render(p);
 }
 function render(page){
+  history.replaceState(null,"","#"+page);
   $("pageRoot").innerHTML=({viaje:pViaje,dos:pDOs,vinos:pVinos,uvas:pUvas,bodegas:pBodegas,paladar:pPaladar,cuenta:pCuenta}[page])();
   if(page==="dos")initMap();
   if(page==="bodegas")initBodegaMap();
@@ -769,6 +779,9 @@ function cambiaPerio(){
 function pausar(){suscripcion.activa=false;render("cuenta");toast("Suscripción en pausa. Tu viaje te espera donde lo dejaste 🍷")}
 function reactivar(){suscripcion.activa=true;render("cuenta");toast("¡De vuelta al viaje!")}
 function cancelar(){suscripcion.activa=false;render("cuenta");toast("Suscripción cancelada con un clic, como prometimos. (demo)")}
+
+/* sesión demo persistente: F5 no te echa */
+try{ if(sessionStorage.getItem("vina_demo")==="1") enter(); }catch(e){}
 </script>
 </body>
 </html>

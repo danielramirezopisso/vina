@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VINA — Tu área personal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --verde:#12291D; --verde-2:#0C1E15; --crema:#F4F0E6; --crema-2:#EAE4D4;
+  --card:#FBF8F1; --tinto:#7A2231; --lima:#C7D8A7; --ink:#141613;
+  --dorado:#C7A94B; --line:rgba(18,41,29,.15); --gris:#B9B4A6;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Work Sans',sans-serif;font-weight:300;background:var(--crema);color:var(--ink);line-height:1.65;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4,.serif{font-family:'Fraunces',serif;font-weight:400}
+button{font-family:inherit;cursor:pointer}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--tinto);outline-offset:2px}
+.eyebrow{font-size:.64rem;letter-spacing:.3em;text-transform:uppercase;color:var(--tinto);font-weight:600}
+.btn{display:inline-block;border-radius:2px;padding:.75rem 1.6rem;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;font-weight:600;text-decoration:none;border:1px solid transparent;transition:all .3s}
+.btn-verde{background:var(--verde);color:var(--crema)}
+.btn-verde:hover{background:var(--verde-2)}
+.btn-tinto{background:var(--tinto);color:var(--crema)}
+.btn-tinto:hover{background:#5E1A26}
+.btn-outline{border-color:var(--verde);color:var(--verde);background:transparent}
+.btn-outline:hover{background:var(--verde);color:var(--crema)}
+.btn-sm{padding:.5rem 1rem;font-size:.62rem}
+
+/* ---------- login ---------- */
+#loginView{min-height:100svh;display:flex;align-items:center;justify-content:center;background:var(--verde);padding:1.5rem;position:relative;overflow:hidden}
+.login-ring{position:absolute;width:76vmin;height:76vmin;border:1px solid rgba(199,216,167,.18);border-radius:50%}
+.login-ring::after{content:"";position:absolute;inset:34px;border:1px solid rgba(199,216,167,.1);border-radius:50%}
+.login-card{position:relative;background:var(--crema);padding:3rem 2.6rem;width:100%;max-width:390px;border-radius:2px}
+.login-logo{font-family:'Fraunces',serif;font-size:1.6rem;letter-spacing:.34em;color:var(--verde);text-align:center;display:block}
+.login-logo span{color:var(--tinto)}
+.login-sub{text-align:center;font-size:.66rem;letter-spacing:.26em;text-transform:uppercase;color:var(--gris);margin:.4rem 0 2rem}
+.field{margin-bottom:1rem}
+.field label{display:block;font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--tinto);margin-bottom:.35rem;font-weight:600}
+.field input,.field select{width:100%;border:1px solid var(--line);background:var(--card);padding:.75rem .85rem;font-family:inherit;font-size:.93rem;border-radius:2px;color:var(--ink)}
+.field input:focus,.field select:focus{outline:none;border-color:var(--verde)}
+.login-hint{margin-top:1.4rem;text-align:center;font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;opacity:.45}
+.login-error{color:var(--tinto);font-size:.8rem;text-align:center;min-height:1.2em;margin-top:.7rem}
+
+/* ---------- app shell ---------- */
+#appView{display:none;min-height:100svh}
+.topbar{background:var(--verde);color:var(--crema);padding:1rem 4vw;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;position:sticky;top:0;z-index:40}
+.topbar .logo{font-family:'Fraunces',serif;font-size:1.25rem;letter-spacing:.3em;text-decoration:none}
+.topbar .logo span{color:var(--lima)}
+.tabs{display:flex;gap:.2rem;flex-wrap:wrap}
+.tabs button{background:none;border:none;color:var(--crema);opacity:.7;padding:.5rem .9rem;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;border-bottom:2px solid transparent;transition:opacity .25s,border-color .25s}
+.tabs button:hover{opacity:1}
+.tabs button.active{opacity:1;border-bottom-color:var(--lima)}
+.hello{font-size:.75rem;opacity:.75}
+main{max-width:1160px;margin:0 auto;padding:2.6rem 4vw 5rem}
+.page-head{margin-bottom:2rem}
+.page-head .eyebrow{display:block;margin-bottom:.4rem}
+.page-head h2{font-size:clamp(1.8rem,3.6vw,2.6rem);color:var(--verde);line-height:1.12}
+.page-head p{opacity:.7;max-width:64ch;margin-top:.5rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:2px;padding:1.8rem}
+.stat-row{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin-bottom:2.4rem}
+.stat{background:var(--card);padding:1.3rem 1.2rem}
+.stat .v{font-family:'Fraunces',serif;font-size:2rem;color:var(--verde);line-height:1.1}
+.stat .l{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gris);font-weight:600}
+.pill{display:inline-block;font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;padding:.16rem .55rem;border-radius:10px;font-weight:600}
+.pill-lima{background:rgba(199,216,167,.4);color:var(--verde)}
+.pill-gris{background:rgba(20,22,19,.07);color:var(--ink)}
+
+/* ---------- viaje ---------- */
+.viaje-wrap{display:grid;grid-template-columns:1fr 320px;gap:2.4rem;align-items:start}
+.jpath{position:relative;padding-left:2.4rem}
+.jpath::before{content:"";position:absolute;left:13px;top:20px;bottom:20px;width:1px;background:var(--line)}
+.jstop{position:relative;padding:1.1rem 0 1.1rem .4rem}
+.jstop::before{content:"";position:absolute;left:-2.4rem;top:1.55rem;width:27px;height:27px;border-radius:50%;background:var(--crema);border:1px solid var(--gris)}
+.jstop.done::before{background:var(--verde);border-color:var(--verde)}
+.jstop.current::before{background:var(--lima);border-color:var(--verde);box-shadow:0 0 0 5px rgba(199,216,167,.35)}
+.jstop .tick{position:absolute;left:-2.05rem;top:1.72rem;color:var(--lima);font-size:.8rem;z-index:2}
+.jstop.locked{opacity:.5}
+.jstop .s-label{font-size:.6rem;letter-spacing:.24em;text-transform:uppercase;color:var(--tinto);font-weight:600}
+.jstop h3{font-size:1.5rem;color:var(--verde);line-height:1.2}
+.jstop p{font-size:.86rem;opacity:.72;max-width:52ch}
+.jstop .j-wines{font-size:.75rem;color:var(--tinto);margin-top:.2rem}
+.next-box{position:sticky;top:90px}
+.next-box .card h3{font-size:1.4rem;color:var(--verde);margin-bottom:.6rem}
+.next-box .big-date{font-family:'Fraunces',serif;font-size:2.1rem;color:var(--tinto);line-height:1.1}
+.next-box p{font-size:.84rem;opacity:.7;margin-top:.6rem}
+.mono-note{background:var(--crema-2);border-left:2px solid var(--dorado);padding:1rem 1.2rem;font-size:.86rem;margin-bottom:2rem;max-width:70ch}
+
+/* ---------- mapa ---------- */
+.map-wrap{display:grid;grid-template-columns:1.5fr 1fr;gap:2rem;align-items:start}
+.map-card{background:var(--verde);border-radius:2px;padding:1.6rem;position:relative}
+.map-card svg{width:100%;height:auto;display:block}
+.do-node{cursor:pointer}
+.do-node circle{fill:#2A4536;stroke:rgba(244,240,230,.25);stroke-width:1;transition:fill .2s}
+.do-node.disc circle{fill:var(--lima);stroke:var(--crema)}
+.do-node:hover circle{stroke-width:2;stroke:var(--crema)}
+.map-legend{display:flex;gap:1.4rem;margin-top:1rem;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(244,240,230,.75);flex-wrap:wrap}
+.map-legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:.4rem;vertical-align:middle}
+.map-tip{position:absolute;pointer-events:none;background:var(--crema);color:var(--ink);border-radius:2px;padding:.6rem .9rem;font-size:.78rem;line-height:1.45;box-shadow:0 8px 24px rgba(0,0,0,.28);opacity:0;transition:opacity .15s;z-index:5;max-width:230px}
+.map-tip strong{font-family:'Fraunces',serif;font-size:.95rem;color:var(--verde);display:block}
+.map-tip .t-status{font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--tinto);font-weight:600}
+.do-list{display:flex;flex-direction:column;gap:.5rem;max-height:520px;overflow:auto;padding-right:.4rem}
+.do-item{display:flex;justify-content:space-between;align-items:center;border:1px solid var(--line);background:var(--card);padding:.65rem .9rem;border-radius:2px;font-size:.86rem}
+.do-item.locked{opacity:.45}
+.do-item .d-name{font-family:'Fraunces',serif;font-size:1rem;color:var(--verde)}
+
+/* ---------- vinos ---------- */
+.wine-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:1.1rem}
+.wine-card{background:var(--card);border:1px solid var(--line);border-radius:2px;padding:1.3rem;display:flex;flex-direction:column;gap:.35rem;transition:transform .25s,box-shadow .25s;cursor:pointer;text-align:left}
+.wine-card:not(.locked):hover{transform:translateY(-3px);box-shadow:0 12px 28px rgba(18,41,29,.12)}
+.wine-card .w-do{font-size:.6rem;letter-spacing:.24em;text-transform:uppercase;color:var(--tinto);font-weight:600}
+.wine-card h3{font-size:1.25rem;color:var(--verde);line-height:1.2}
+.wine-card .w-meta{font-size:.76rem;opacity:.65}
+.wine-card .w-open{font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--tinto);margin-top:.5rem;font-weight:600}
+.wine-card.locked{background:repeating-linear-gradient(-45deg,var(--crema-2),var(--crema-2) 8px,var(--card) 8px,var(--card) 16px);opacity:.75;align-items:center;justify-content:center;text-align:center;min-height:200px;cursor:default}
+.wine-card.locked .q{font-family:'Fraunces',serif;font-size:2.4rem;color:var(--gris)}
+.wine-card.locked p{font-size:.75rem;opacity:.65}
+.mini-bottle{height:110px;display:flex;justify-content:center;margin-bottom:.5rem}
+.mini-bottle svg{height:100%}
+.copas{display:flex;gap:.1rem;margin-top:.3rem}
+.copas button{background:none;border:none;font-size:1.1rem;padding:0 .06rem;transition:transform .15s;filter:grayscale(1);opacity:.28}
+.copas button.on{filter:none;opacity:1}
+.copas button:hover{transform:scale(1.22)}
+.copas.readonly button{cursor:default;pointer-events:none}
+.w-type{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:.35rem;vertical-align:middle}
+.w-type.tinto{background:var(--tinto)}
+.w-type.blanco{background:var(--dorado)}
+
+/* wine detail */
+.detail-grid{display:grid;grid-template-columns:280px 1fr;gap:2.6rem;align-items:start}
+.detail-bottle{background:var(--verde);border-radius:2px;padding:2.4rem 1rem;display:flex;justify-content:center}
+.detail-bottle svg{height:380px}
+.detail-info h2{font-size:2.2rem;color:var(--verde);line-height:1.1}
+.detail-info .d-meta{font-size:.9rem;opacity:.7;margin:.5rem 0 1.2rem}
+.detail-info .d-desc{max-width:58ch;margin-bottom:1.6rem}
+.prof-bar{margin-bottom:.85rem;max-width:420px}
+.prof-bar .p-lab{display:flex;justify-content:space-between;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--verde);font-weight:600;margin-bottom:.25rem}
+.prof-bar .track{height:5px;background:var(--crema-2);border-radius:3px;overflow:hidden}
+.prof-bar .fill{height:100%;background:linear-gradient(90deg,var(--lima),var(--verde));border-radius:3px;width:0;transition:width 1s ease}
+.back-link{background:none;border:none;color:var(--tinto);font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;font-weight:600;margin-bottom:1.4rem;display:inline-block}
+.back-link:hover{text-decoration:underline}
+
+/* ---------- uvas ---------- */
+.uva-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:1rem}
+.uva{border:1px solid var(--line);background:var(--card);border-radius:2px;padding:1.2rem 1rem;text-align:center;transition:transform .25s;position:relative;overflow:hidden}
+.uva:not(.locked):hover{transform:translateY(-3px)}
+.uva .u-dot{width:44px;height:44px;border-radius:50%;margin:0 auto .7rem;display:flex;align-items:center;justify-content:center;font-size:1.15rem}
+.uva.t .u-dot{background:radial-gradient(circle at 35% 30%,#A6485C,var(--tinto))}
+.uva.b .u-dot{background:radial-gradient(circle at 35% 30%,#E8DFA8,#C7A94B)}
+.uva h3{font-size:1.1rem;color:var(--verde)}
+.uva .u-sub{font-size:.68rem;opacity:.6}
+.uva.locked{opacity:.42}
+.uva.locked .u-dot{background:var(--crema-2);color:var(--gris)}
+.uva .u-wines{
+  position:absolute;inset:0;background:var(--verde);color:var(--crema);
+  display:flex;flex-direction:column;justify-content:center;padding:1rem;
+  font-size:.72rem;line-height:1.5;opacity:0;transition:opacity .25s;pointer-events:none;
+}
+.uva .u-wines .uw-t{font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:var(--lima);font-weight:600;margin-bottom:.3rem}
+.uva:not(.locked):hover .u-wines,.uva:not(.locked):focus-within .u-wines{opacity:1}
+
+/* ---------- bodegas ---------- */
+.bodega-list{display:flex;flex-direction:column;gap:.6rem}
+.bodega{background:var(--card);border:1px solid var(--line);border-radius:2px;padding:1.1rem 1.3rem}
+.bodega h3{font-size:1.15rem;color:var(--verde)}
+.bodega .b-do{font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:var(--tinto);font-weight:600}
+.bodega p{font-size:.8rem;opacity:.75;margin-top:.25rem}
+.bodega-node circle{fill:var(--dorado);stroke:var(--crema);stroke-width:1;cursor:pointer}
+.bodega-node:hover circle{stroke-width:2}
+
+/* ---------- paladar ---------- */
+.pal-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;align-items:start}
+.pal-insight{font-family:'Fraunces',serif;font-style:italic;font-size:1.2rem;color:var(--verde);border-left:2px solid var(--tinto);padding-left:1.2rem;line-height:1.5;margin-top:1.4rem}
+.top-vino{display:flex;justify-content:space-between;align-items:center;padding:.7rem 0;border-bottom:1px solid var(--line);font-size:.86rem}
+.top-vino:last-child{border-bottom:none}
+.split{display:flex;height:10px;border-radius:5px;overflow:hidden;margin:.6rem 0 .3rem}
+.split .s-t{background:var(--tinto)}
+.split .s-b{background:var(--dorado)}
+.split-lab{display:flex;justify-content:space-between;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:var(--verde)}
+
+/* ---------- cuenta ---------- */
+.cuenta-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;align-items:start}
+.cuenta-grid h3{font-size:1.35rem;color:var(--verde);margin-bottom:1rem}
+.sub-status{display:flex;align-items:center;gap:.6rem;margin-bottom:1.2rem}
+.sub-status .dot{width:9px;height:9px;border-radius:50%;background:#4E7A5A}
+.sub-status .dot.paused{background:var(--dorado)}
+table{width:100%;border-collapse:collapse;font-size:.84rem}
+th{text-align:left;font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gris);font-weight:600;padding:.5rem .6rem;border-bottom:1px solid var(--line)}
+td{padding:.65rem .6rem;border-bottom:1px solid var(--line)}
+tr:last-child td{border-bottom:none}
+.one-click{font-size:.72rem;opacity:.55;margin-top:.7rem}
+
+#toast{position:fixed;bottom:1.6rem;left:50%;transform:translateX(-50%) translateY(20px);background:var(--verde-2);color:var(--crema);padding:.8rem 1.6rem;border-radius:2px;font-size:.8rem;opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;z-index:200}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.demo-note{margin-top:1.6rem;text-align:center;font-size:.62rem;letter-spacing:.1em;opacity:.4;text-transform:uppercase}
+.section-note{font-size:.8rem;opacity:.6;margin-top:1.4rem;max-width:70ch}
+
+@media (max-width:900px){
+  .viaje-wrap,.map-wrap,.pal-grid,.cuenta-grid,.detail-grid{grid-template-columns:1fr}
+  .stat-row{grid-template-columns:repeat(2,1fr)}
+  .next-box{position:static}
+  .tabs{order:3;width:100%;overflow-x:auto;flex-wrap:nowrap}
+  .detail-bottle svg{height:280px}
+}
+</style>
+</head>
+<body>
+
+<div id="loginView">
+  <div class="login-ring" aria-hidden="true"></div>
+  <div class="login-card">
+    <span class="login-logo">VIN<span>A</span></span>
+    <p class="login-sub">Tu área personal</p>
+    <div class="field"><label for="lu">Email</label><input id="lu" autocomplete="off" placeholder="ana@email.com"></div>
+    <div class="field"><label for="lp">Contraseña</label><input id="lp" type="password" autocomplete="off" placeholder="••••••"></div>
+    <button class="btn btn-verde" style="width:100%;text-align:center" onclick="tryLogin()">Entrar</button>
+    <p class="login-error" id="loginError"></p>
+    <button class="btn btn-outline btn-sm" style="width:100%;text-align:center;margin-top:.6rem" onclick="enter()">Entrar con la cuenta de ejemplo</button>
+    <p class="login-hint">Demo — ana / vina</p>
+  </div>
+</div>
+
+<div id="appView">
+  <div class="topbar">
+    <a class="logo" href="index.html">VIN<span>A</span></a>
+    <div class="tabs" id="tabs">
+      <button data-page="viaje" class="active">Tu Viaje</button>
+      <button data-page="dos">Tus DOs</button>
+      <button data-page="vinos">Tus Vinos</button>
+      <button data-page="uvas">Tus Uvas</button>
+      <button data-page="bodegas">Tus Bodegas</button>
+      <button data-page="paladar">Tu Paladar</button>
+      <button data-page="cuenta">Mi Cuenta</button>
+    </div>
+    <span class="hello">Hola, Ana 🍷</span>
+  </div>
+  <main id="pageRoot"></main>
+</div>
+
+<div id="toast"></div>
+
+<script>
+/* =============== DATOS DEMO (en memoria) =============== */
+const ETAPAS = [
+  {n:1,do:"Rioja",estado:"done",texto:"Donde casi todos empezamos: Tempranillo, crianza y el porqué de las barricas.",vinos:"Valdemonte Crianza 2020 · Finca La Serna Blanco 2022"},
+  {n:2,do:"Ribera del Duero",estado:"done",texto:"La misma uva, otra altitud, otro carácter. Tu primer duelo de paladar.",vinos:"Páramo Alto 2021 · Cepas del Duero Roble 2022"},
+  {n:3,do:"Rías Baixas",estado:"done",texto:"Tu primer blanco atlántico: Albariño, salinidad y frescura.",vinos:"Mar de Orballo 2023 · Pazo de Sombra 2022"},
+  {n:4,do:"Priorat",estado:"current",texto:"Llicorella, viñas viejas y garnachas de montaña. Sube el nivel.",vinos:"Llicorella Vella 2019 · Costers del Nord 2021"},
+  {n:5,do:"?",estado:"locked",texto:"Se revela cuando llegue a tu puerta, el 1 de agosto.",vinos:""},
+  {n:6,do:"?",estado:"locked",texto:"",vinos:""},
+  {n:7,do:"?",estado:"locked",texto:"",vinos:""},
+  {n:8,do:"?",estado:"locked",texto:"",vinos:""},
+];
+
+const DOS = [
+  {n:"Rías Baixas",x:115,y:205,reg:"Galicia",disc:true,fecha:"Mayo 2026",nota:"Albariño atlántico, fresco y salino."},
+  {n:"Ribeiro",x:150,y:225,reg:"Galicia"},
+  {n:"Ribeira Sacra",x:182,y:200,reg:"Galicia"},
+  {n:"Valdeorras",x:212,y:220,reg:"Galicia"},
+  {n:"Monterrei",x:185,y:246,reg:"Galicia"},
+  {n:"Bierzo",x:247,y:214,reg:"Castilla y León"},
+  {n:"Toro",x:285,y:300,reg:"Castilla y León"},
+  {n:"Rueda",x:322,y:316,reg:"Castilla y León"},
+  {n:"Cigales",x:330,y:274,reg:"Castilla y León"},
+  {n:"Ribera del Duero",x:382,y:284,reg:"Castilla y León",disc:true,fecha:"Abril 2026",nota:"Tempranillo de altura, fruta negra y estructura."},
+  {n:"Rioja",x:455,y:206,reg:"La Rioja",disc:true,fecha:"Marzo 2026",nota:"Tu primera etapa. Crianza clásica y elegancia."},
+  {n:"Navarra",x:505,y:180,reg:"Navarra"},
+  {n:"Getariako Txakolina",x:480,y:140,reg:"País Vasco"},
+  {n:"Somontano",x:600,y:190,reg:"Aragón"},
+  {n:"Campo de Borja",x:530,y:240,reg:"Aragón"},
+  {n:"Calatayud",x:505,y:272,reg:"Aragón"},
+  {n:"Cariñena",x:556,y:260,reg:"Aragón"},
+  {n:"Costers del Segre",x:640,y:234,reg:"Cataluña"},
+  {n:"Empordà",x:728,y:214,reg:"Cataluña"},
+  {n:"Penedès",x:700,y:268,reg:"Cataluña"},
+  {n:"Montsant",x:643,y:282,reg:"Cataluña"},
+  {n:"Priorat",x:660,y:298,reg:"Cataluña",disc:true,fecha:"Junio 2026",nota:"Garnacha y cariñena sobre llicorella. Etapa en curso."},
+  {n:"Terra Alta",x:618,y:302,reg:"Cataluña"},
+  {n:"Valencia",x:615,y:400,reg:"C. Valenciana"},
+  {n:"Utiel-Requena",x:570,y:394,reg:"C. Valenciana"},
+  {n:"Manchuela",x:545,y:422,reg:"Castilla-La Mancha"},
+  {n:"Alicante",x:614,y:455,reg:"C. Valenciana"},
+  {n:"Yecla",x:580,y:460,reg:"Murcia"},
+  {n:"Jumilla",x:555,y:476,reg:"Murcia"},
+  {n:"Bullas",x:540,y:506,reg:"Murcia"},
+  {n:"La Mancha",x:450,y:420,reg:"Castilla-La Mancha"},
+  {n:"Valdepeñas",x:436,y:470,reg:"Castilla-La Mancha"},
+  {n:"Méntrida",x:372,y:382,reg:"Castilla-La Mancha"},
+  {n:"Vinos de Madrid",x:402,y:350,reg:"Madrid"},
+  {n:"Ribera del Guadiana",x:300,y:455,reg:"Extremadura"},
+  {n:"Condado de Huelva",x:290,y:552,reg:"Andalucía"},
+  {n:"Jerez-Xérès-Sherry",x:325,y:582,reg:"Andalucía"},
+  {n:"Málaga",x:430,y:568,reg:"Andalucía"},
+  {n:"Montilla-Moriles",x:375,y:520,reg:"Andalucía"},
+];
+
+/* perfil: 0-100 → cuerpo, acidez, fruta, madera, mineral */
+const VINOS = [
+  {n:"Valdemonte Crianza",anio:2020,do:"Rioja",uvas:["Tempranillo"],tipo:"tinto",bodega:"Bodegas Valdemonte",
+   desc:"Crianza clásico: fruta roja madura, vainilla suave y taninos pulidos. Doce meses en barrica de roble americano y ese equilibrio que ha hecho famosa a la Rioja. El punto de partida perfecto.",
+   perfil:{cuerpo:65,acidez:55,fruta:60,madera:70,mineral:30},rating:4,marida:"Asados, quesos curados, jamón."},
+  {n:"Finca La Serna Blanco",anio:2022,do:"Rioja",uvas:["Viura"],tipo:"blanco",bodega:"Finca La Serna",
+   desc:"Blanco fresco con notas de manzana verde y flores blancas. Un ligero paso por lías le da textura sin robarle la frescura.",
+   perfil:{cuerpo:35,acidez:70,fruta:55,madera:15,mineral:40},rating:2,marida:"Aperitivos, ensaladas, pescado blanco."},
+  {n:"Páramo Alto",anio:2021,do:"Ribera del Duero",uvas:["Tempranillo"],tipo:"tinto",bodega:"Bodega Páramo Alto",
+   desc:"Fruta negra, regaliz y una acidez vibrante de viñedo a 900 metros. La misma uva que en Rioja — Tinta del País la llaman aquí — con un carácter completamente distinto.",
+   perfil:{cuerpo:80,acidez:65,fruta:70,madera:55,mineral:50},rating:5,marida:"Lechazo, carnes a la brasa."},
+  {n:"Cepas del Duero Roble",anio:2022,do:"Ribera del Duero",uvas:["Tempranillo"],tipo:"tinto",bodega:"Cepas del Duero",
+   desc:"Roble breve, mucha fruta. Directo, jugoso y fácil de querer. El tinto de diario que sube el listón del diario.",
+   perfil:{cuerpo:60,acidez:60,fruta:80,madera:35,mineral:35},rating:4,marida:"Pasta, arroces de carne, tapas."},
+  {n:"Mar de Orballo",anio:2023,do:"Rías Baixas",uvas:["Albariño"],tipo:"blanco",bodega:"Adega Mar de Orballo",
+   desc:"Cítricos, piel de pomelo y ese toque salino del Atlántico que te transporta a la ría. Pide marisco a gritos.",
+   perfil:{cuerpo:40,acidez:85,fruta:65,madera:5,mineral:75},rating:5,marida:"Marisco, ostras, pescado a la plancha."},
+  {n:"Pazo de Sombra",anio:2022,do:"Rías Baixas",uvas:["Albariño"],tipo:"blanco",bodega:"Pazo de Sombra",
+   desc:"Un albariño más serio: fruta de hueso, fondo cremoso por la crianza sobre lías y un final largo que sorprende.",
+   perfil:{cuerpo:50,acidez:75,fruta:60,madera:15,mineral:70},rating:3,marida:"Pulpo, pescados en salsa, aves."},
+  {n:"Llicorella Vella",anio:2019,do:"Priorat",uvas:["Garnacha","Cariñena"],tipo:"tinto",bodega:"Celler Llicorella",
+   desc:"Mineral, profundo, con la pizarra del Priorat en cada trago. Viñas de más de 60 años en costers imposibles. Nota: este es el único vino con dos uvas de tu primer viaje — un pequeño adelanto de lo que vendrá.",
+   perfil:{cuerpo:90,acidez:60,fruta:55,madera:60,mineral:90},rating:0,marida:"Caza, estofados, quesos potentes."},
+  {n:"Costers del Nord",anio:2021,do:"Priorat",uvas:["Garnacha"],tipo:"tinto",bodega:"Celler Costers del Nord",
+   desc:"Garnacha de montaña: flores, fruta roja fresca y una elegancia inesperada para la fama ruda de la zona.",
+   perfil:{cuerpo:70,acidez:65,fruta:75,madera:30,mineral:70},rating:0,marida:"Setas, arroz negro, cordero."},
+];
+
+const UVAS = [
+  {n:"Tempranillo",tipo:"t",sub:"También llamada Tinta del País",disc:true},
+  {n:"Viura",tipo:"b",sub:"La reina blanca de Rioja",disc:true},
+  {n:"Albariño",tipo:"b",sub:"El blanco del Atlántico",disc:true},
+  {n:"Garnacha",tipo:"t",sub:"Mediterránea y generosa",disc:true},
+  {n:"Cariñena",tipo:"t",sub:"En Cataluña, Samsó",disc:true},
+  {n:"Verdejo",tipo:"b"},{n:"Godello",tipo:"b"},{n:"Mencía",tipo:"t"},
+  {n:"Monastrell",tipo:"t"},{n:"Palomino",tipo:"b"},{n:"Bobal",tipo:"t"},
+  {n:"Xarel·lo",tipo:"b"},{n:"Macabeo",tipo:"b"},{n:"Parellada",tipo:"b"},
+  {n:"Graciano",tipo:"t"},{n:"Pedro Ximénez",tipo:"b"},{n:"Treixadura",tipo:"b"},{n:"Mazuelo",tipo:"t"},
+];
+
+const BODEGAS = [
+  {n:"Bodegas Valdemonte",do:"Rioja",x:448,y:198,desc:"Familiar desde 1921. Crianzas clásicos en el corazón de la Rioja Alta."},
+  {n:"Finca La Serna",do:"Rioja",x:466,y:214,desc:"Pequeña finca centrada en blancos de Viura con mínima intervención."},
+  {n:"Bodega Páramo Alto",do:"Ribera del Duero",x:388,y:276,desc:"Viñedo de altura en el páramo burgalés. Vinos tensos y de larga guarda."},
+  {n:"Cepas del Duero",do:"Ribera del Duero",x:372,y:292,desc:"Cooperativa moderna que borda los robles jóvenes."},
+  {n:"Adega Mar de Orballo",do:"Rías Baixas",x:112,y:198,desc:"Albariños del Val do Salnés a un paso de la ría."},
+  {n:"Pazo de Sombra",do:"Rías Baixas",x:124,y:214,desc:"Un pazo del s. XVIII con tres hectáreas y mucha paciencia."},
+  {n:"Celler Llicorella",do:"Priorat",x:654,y:292,desc:"Viñas viejas en costers imposibles. Producción minúscula."},
+  {n:"Celler Costers del Nord",do:"Priorat",x:668,y:306,desc:"Proyecto joven en la cara norte, buscando frescura."},
+];
+
+let pedidos = [
+  {id:"#0004",fecha:"1 Jun 2026",etapa:"Priorat",importe:"26,95 €",estado:"Entregado"},
+  {id:"#0003",fecha:"1 May 2026",etapa:"Rías Baixas",importe:"26,95 €",estado:"Entregado"},
+  {id:"#0002",fecha:"1 Abr 2026",etapa:"Ribera del Duero",importe:"26,95 €",estado:"Entregado"},
+  {id:"#0001",fecha:"1 Mar 2026",etapa:"Rioja",importe:"26,95 €",estado:"Entregado"},
+];
+let suscripcion = {activa:true,periodicidad:"1",proxima:"1 Ago 2026"};
+
+/* =============== helpers =============== */
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
+function toast(m){const t=$("toast");t.textContent=m;t.classList.add("show");clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove("show"),2600)}
+/* barajado estable por sesión, para que parezca colección y no lista */
+function shuffled(arr){
+  const a=arr.map((v,i)=>({v,k:Math.sin(i*99991+arr.length*7)*10000%1}));
+  return a.sort((x,y)=>x.k-y.k).map(x=>x.v);
+}
+const MAPA_PATH = "M95 175 C100 150 130 132 160 128 C230 118 320 112 420 108 C455 106 500 110 540 116 C560 118 590 128 620 142 C660 160 700 175 740 192 C755 198 762 205 755 218 C742 240 725 258 705 278 C688 296 675 312 665 330 C652 355 645 378 640 398 C636 420 650 438 662 448 C670 456 668 468 660 476 C645 492 630 505 618 512 C605 520 588 528 572 532 C550 538 530 548 512 556 C490 566 468 574 448 582 C428 590 405 600 385 612 C372 620 355 622 342 612 C322 598 300 585 285 570 C272 558 262 548 258 535 C253 520 258 505 262 490 C266 474 258 460 250 448 C242 434 244 418 252 404 C258 392 254 376 246 364 C238 350 240 332 248 318 C254 306 250 290 242 278 C232 262 228 246 230 232 C231 220 222 212 210 210 C185 206 160 215 138 222 C118 228 100 215 96 198 C94 190 94 182 95 175 Z";
+function spainSVG(inner){
+  return `<svg viewBox="60 80 800 580" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Mapa estilizado de España">
+    <path d="${MAPA_PATH}" fill="#193527" stroke="rgba(199,216,167,.35)" stroke-width="1.5"/>
+    <ellipse cx="800" cy="330" rx="26" ry="14" fill="#193527" stroke="rgba(199,216,167,.3)" stroke-width="1"/>
+    <ellipse cx="758" cy="356" rx="12" ry="8" fill="#193527" stroke="rgba(199,216,167,.3)" stroke-width="1"/>
+    <ellipse cx="838" cy="300" rx="13" ry="7" fill="#193527" stroke="rgba(199,216,167,.3)" stroke-width="1"/>
+    ${inner}</svg>`;
+}
+function bottleSVG(v,h=340){
+  const glass = v.tipo==="tinto" ? "#0C1E15" : "#E9E2C8";
+  const glassStroke = v.tipo==="tinto" ? "rgba(199,216,167,.5)" : "rgba(122,34,49,.35)";
+  const label = v.tipo==="tinto" ? "#F4F0E6" : "#12291D";
+  const labelTxt = v.tipo==="tinto" ? "#12291D" : "#F4F0E6";
+  const capsula = v.tipo==="tinto" ? "#7A2231" : "#C7A94B";
+  const sub = v.tipo==="tinto" ? "#7A2231" : "#C7D8A7";
+  return `<svg viewBox="0 0 100 360" height="${h}" xmlns="http://www.w3.org/2000/svg" aria-label="Botella de ${esc(v.n)}">
+    <path d="M42 8 h16 v16 c0 6 1 10 3 16 l7 20 c3 9 4 18 4 28 v230 c0 16 -11 30 -22 30 s-22 -14 -22 -30 V88 c0 -10 1 -19 4 -28 l7 -20 c2 -6 3 -10 3 -16 z"
+      fill="${glass}" stroke="${glassStroke}" stroke-width="1.5"/>
+    <rect x="38" y="8" width="24" height="30" fill="${capsula}"/>
+    <rect x="22" y="160" width="56" height="96" rx="2" fill="${label}"/>
+    <text x="50" y="196" text-anchor="middle" font-family="Fraunces,serif" font-size="15" letter-spacing="4" fill="${labelTxt}">VINA</text>
+    <line x1="32" y1="206" x2="68" y2="206" stroke="${sub}" stroke-width=".8"/>
+    <text x="50" y="222" text-anchor="middle" font-family="Work Sans,sans-serif" font-size="7.5" letter-spacing="1" fill="${sub}">${esc(v.do.toUpperCase().slice(0,18))}</text>
+    <text x="50" y="236" text-anchor="middle" font-family="Work Sans,sans-serif" font-size="7" letter-spacing="1" fill="${labelTxt}" opacity=".7">${v.anio}</text>
+  </svg>`;
+}
+const PERFIL_LABELS = {cuerpo:"Cuerpo",acidez:"Acidez",fruta:"Fruta",madera:"Madera",mineral:"Mineralidad"};
+function nivel(x){return x>=75?"Alta":x>=55?"Media-alta":x>=40?"Media":x>=25?"Media-baja":"Baja"}
+
+/* =============== login / router =============== */
+function tryLogin(){
+  const u=$("lu").value.trim().toLowerCase(),p=$("lp").value;
+  if((u==="ana"||u==="ana@email.com")&&p==="vina") enter();
+  else $("loginError").textContent="No coinciden. Prueba ana / vina o usa la cuenta de ejemplo.";
+}
+function enter(){$("loginView").style.display="none";$("appView").style.display="block";render("viaje")}
+$("lp").addEventListener("keydown",e=>{if(e.key==="Enter")tryLogin()});
+function logout(){$("appView").style.display="none";$("loginView").style.display="flex";$("lu").value="";$("lp").value=""}
+
+$("tabs").addEventListener("click",e=>{
+  const b=e.target.closest("button");if(!b)return;
+  document.querySelectorAll(".tabs button").forEach(x=>x.classList.remove("active"));
+  b.classList.add("active");render(b.dataset.page);
+});
+function goTab(p){
+  document.querySelectorAll(".tabs button").forEach(x=>x.classList.toggle("active",x.dataset.page===p));
+  render(p);
+}
+function render(page){
+  $("pageRoot").innerHTML=({viaje:pViaje,dos:pDOs,vinos:pVinos,uvas:pUvas,bodegas:pBodegas,paladar:pPaladar,cuenta:pCuenta}[page])();
+  if(page==="dos")initMap();
+  if(page==="bodegas")initBodegaMap();
+  if(page==="paladar")animateBars();
+  window.scrollTo({top:0});
+}
+function animateBars(){setTimeout(()=>document.querySelectorAll(".fill").forEach(f=>f.style.width=f.dataset.w),60)}
+function statRow(){
+  const uv=UVAS.filter(u=>u.disc).length, dd=DOS.filter(d=>d.disc).length;
+  return `<div class="stat-row">
+    <div class="stat"><div class="v">4<span style="font-size:1rem;color:var(--gris)">/12</span></div><div class="l">Etapas</div></div>
+    <div class="stat"><div class="v">${VINOS.length}</div><div class="l">Vinos probados</div></div>
+    <div class="stat"><div class="v">${dd}<span style="font-size:1rem;color:var(--gris)">/${DOS.length}</span></div><div class="l">DOs descubiertas</div></div>
+    <div class="stat"><div class="v">${uv}<span style="font-size:1rem;color:var(--gris)">/${UVAS.length}</span></div><div class="l">Uvas</div></div>
+    <div class="stat"><div class="v">${BODEGAS.length}</div><div class="l">Bodegas</div></div>
+  </div>`;
+}
+
+/* =============== TU VIAJE =============== */
+function pViaje(){
+  return `
+  <div class="page-head"><span class="eyebrow">Tu Viaje VINA</span><h2>Etapa 4 de 12</h2>
+  <p>Tu recorrido por España, botella a botella. Cada entrega desbloquea una etapa nueva — y hasta que no llega a tu puerta, es secreto.</p></div>
+  <div class="mono-note">🍇 <strong>Tu primer viaje es 100% monovarietal:</strong> todos los vinos están hechos con una sola uva, para que aprendas a reconocer cada variedad por sí misma. En próximos viajes llegarán los <em>coupages</em> — mezclas de dos uvas — y ahí empezará el juego de adivinar.</div>
+  ${statRow()}
+  <div class="viaje-wrap">
+    <div class="jpath">
+      ${ETAPAS.map(e=>`
+        <div class="jstop ${e.estado==="done"?"done":e.estado==="current"?"current":"locked"}">
+          ${e.estado==="done"?'<span class="tick">✓</span>':""}
+          <span class="s-label">Etapa ${String(e.n).padStart(2,"0")} · ${e.estado==="done"?"completada":e.estado==="current"?"en curso":"por revelar"}</span>
+          <h3>${esc(e.do)}</h3>
+          <p>${esc(e.texto)}</p>
+          ${e.vinos?`<p class="j-wines">🍷 ${esc(e.vinos)}</p>`:""}
+        </div>`).join("")}
+    </div>
+    <div class="next-box">
+      <div class="card">
+        <span class="eyebrow">Próxima entrega</span>
+        <h3 style="margin-top:.4rem">Etapa 05 · ?</h3>
+        <div class="big-date">1 de agosto</div>
+        <p>Dos vinos de una nueva denominación van de camino. ¿Cuál? Secreto hasta que abras la caja. Tienes hasta el 25 de julio para pausar o cambiar la dirección de entrega.</p>
+        <button class="btn btn-outline btn-sm" style="margin-top:1rem" onclick="goTab('cuenta')">Gestionar suscripción</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* =============== TUS DOs =============== */
+function pDOs(){
+  const disc=DOS.filter(d=>d.disc).length;
+  const lista=shuffled(DOS);
+  return `
+  <div class="page-head"><span class="eyebrow">Tus DOs</span><h2>${disc} de ${DOS.length} denominaciones descubiertas</h2>
+  <p>Pasa el ratón por el mapa: en color, las que ya has probado. En gris, todo lo que te queda por delante. Pronto podrás sumergirte región a región — Galicia, Andalucía, Cataluña — con mapas de detalle.</p></div>
+  <div class="map-wrap">
+    <div class="map-card" id="mapCard">
+      ${spainSVG('<g id="doNodes"></g><text x="800" y="385" text-anchor="middle" font-size="10" fill="rgba(244,240,230,.4)" letter-spacing="2" font-family="Work Sans">BALEARES</text>')}
+      <div class="map-legend">
+        <span><i style="background:var(--lima)"></i>Descubierta</span>
+        <span><i style="background:#2A4536;border:1px solid rgba(244,240,230,.3)"></i>Por descubrir</span>
+      </div>
+      <div class="map-tip" id="mapTip"></div>
+    </div>
+    <div class="do-list">
+      ${lista.map(d=>`
+        <div class="do-item ${d.disc?"":"locked"}">
+          <div><div class="d-name">${d.disc?esc(d.n):"?????"}</div>
+          <span style="font-size:.7rem;opacity:.6">${esc(d.reg)}</span></div>
+          ${d.disc?`<span class="pill pill-lima">${esc(d.fecha)}</span>`:`<span class="pill pill-gris">Por descubrir</span>`}
+        </div>`).join("")}
+    </div>
+  </div>`;
+}
+function initMap(){
+  const g=$("doNodes"),tip=$("mapTip"),card=$("mapCard");
+  DOS.forEach(d=>{
+    const node=document.createElementNS("http://www.w3.org/2000/svg","g");
+    node.setAttribute("class","do-node"+(d.disc?" disc":""));
+    node.innerHTML=`<circle cx="${d.x}" cy="${d.y}" r="${d.disc?9:6.5}"/>`;
+    node.addEventListener("mousemove",ev=>{
+      const r=card.getBoundingClientRect();
+      tip.style.opacity=1;
+      tip.style.left=Math.min(ev.clientX-r.left+14,r.width-240)+"px";
+      tip.style.top=(ev.clientY-r.top+14)+"px";
+      tip.innerHTML = d.disc
+        ? `<span class="t-status">Descubierta · ${esc(d.fecha)}</span><strong>${esc(d.n)}</strong>${esc(d.reg)}<br>${esc(d.nota||"")}`
+        : `<span class="t-status" style="color:var(--gris)">Por descubrir</span><strong>?????</strong>${esc(d.reg)}`;
+    });
+    node.addEventListener("mouseleave",()=>tip.style.opacity=0);
+    g.appendChild(node);
+  });
+}
+
+/* =============== TUS VINOS =============== */
+function copas(i,rating,readonly){
+  return `<div class="copas ${readonly?"readonly":""}" aria-label="Valoración">
+    ${[1,2,3,4,5].map(s=>`<button class="${rating>=s?"on":""}" ${readonly?"":`onclick="event.stopPropagation();rate(${i},${s})"`} aria-label="${s} copas">🍷</button>`).join("")}
+  </div>`;
+}
+function pVinos(){
+  const orden=shuffled(VINOS.map((v,i)=>i));
+  return `
+  <div class="page-head"><span class="eyebrow">Tus Vinos</span><h2>${VINOS.length} vinos probados · 2 en camino</h2>
+  <p>Tu colección crece con cada entrega. Entra en cada botella para ver su ficha completa y su perfil — y valórala con copas para dar forma a tu paladar.</p></div>
+  <div class="wine-grid">
+    ${orden.map(i=>{const v=VINOS[i];return `
+      <button class="wine-card" onclick="openWine(${i})">
+        <div class="mini-bottle">${bottleSVG(v,110)}</div>
+        <span class="w-do">${esc(v.do)}</span>
+        <h3><span class="w-type ${v.tipo}"></span>${esc(v.n)} ${v.anio}</h3>
+        <span class="w-meta">${v.uvas.map(esc).join(" · ")}</span>
+        ${copas(i,v.rating,true)}
+        <span class="w-open">Ver ficha →</span>
+      </button>`}).join("")}
+    <div class="wine-card locked"><span class="q">?</span><p><strong>Etapa 05</strong><br>Se revela el 1 de agosto</p></div>
+    <div class="wine-card locked"><span class="q">?</span><p><strong>Etapa 05</strong><br>Se revela el 1 de agosto</p></div>
+  </div>
+  <p class="demo-note">Demo — tus votos viven sólo en esta sesión</p>`;
+}
+function openWine(i){
+  const v=VINOS[i];
+  $("pageRoot").innerHTML=`
+  <button class="back-link" onclick="render('vinos')">← Volver a tus vinos</button>
+  <div class="detail-grid">
+    <div class="detail-bottle">${bottleSVG(v,380)}</div>
+    <div class="detail-info">
+      <span class="eyebrow">${esc(v.do)} · Etapa ${["Rioja","Ribera del Duero","Rías Baixas","Priorat"].indexOf(v.do)+1}</span>
+      <h2>${esc(v.n)} ${v.anio}</h2>
+      <p class="d-meta"><span class="w-type ${v.tipo}"></span>${v.tipo==="tinto"?"Tinto":"Blanco"} · ${v.uvas.map(esc).join(" y ")} · ${esc(v.bodega)}</p>
+      <p class="d-desc">${esc(v.desc)}</p>
+      <h3 class="serif" style="font-size:1.2rem;color:var(--verde);margin-bottom:.8rem">Perfil del vino</h3>
+      ${Object.entries(v.perfil).map(([k,val])=>`
+        <div class="prof-bar"><div class="p-lab"><span>${PERFIL_LABELS[k]}</span><span>${nivel(val)}</span></div>
+        <div class="track"><div class="fill" data-w="${val}%"></div></div></div>`).join("")}
+      <p style="font-size:.85rem;opacity:.7;margin:1.2rem 0 .4rem">🍽️ Marida con: ${esc(v.marida)}</p>
+      <h3 class="serif" style="font-size:1.2rem;color:var(--verde);margin:1.4rem 0 .4rem">Tu valoración</h3>
+      ${copas(i,v.rating,false)}
+      <p style="font-size:.75rem;opacity:.55;margin-top:.4rem">${v.rating?`Le diste ${v.rating} copa${v.rating>1?"s":""}. Haz clic para cambiarla.`:"Aún no la has valorado. Cada voto afina tu paladar."}</p>
+    </div>
+  </div>`;
+  animateBars();
+  window.scrollTo({top:0});
+}
+function rate(i,s){
+  VINOS[i].rating = VINOS[i].rating===s ? 0 : s;
+  openWine(i);
+  toast(VINOS[i].rating?`${s} copa${s>1?"s":""} para ${VINOS[i].n}. Tu paladar toma nota 🍷`:"Valoración retirada");
+}
+
+/* =============== TUS UVAS =============== */
+function vinosConUva(nombre){
+  return VINOS.filter(v=>v.uvas.includes(nombre)).map(v=>`${v.n} ${v.anio} (${v.do})`);
+}
+function pUvas(){
+  const d=UVAS.filter(u=>u.disc).length;
+  const lista=shuffled(UVAS);
+  return `
+  <div class="page-head"><span class="eyebrow">Tus Uvas</span><h2>${d} de ${UVAS.length} variedades descubiertas</h2>
+  <p>En este primer viaje todos los vinos son 100% de una sola uva — así aprendes a reconocerlas una a una. Pasa el ratón sobre una uva descubierta para ver en qué vino la probaste.</p></div>
+  <div class="uva-grid">
+    ${lista.map(u=>{
+      const w=u.disc?vinosConUva(u.n):[];
+      return `
+      <div class="uva ${u.tipo} ${u.disc?"":"locked"}" tabindex="${u.disc?"0":"-1"}">
+        <div class="u-dot">${u.disc?"🍇":"?"}</div>
+        <h3>${u.disc?esc(u.n):"?????"}</h3>
+        <span class="u-sub">${u.disc?esc(u.sub||(u.tipo==="t"?"Tinta":"Blanca")):(u.tipo==="t"?"Tinta · por descubrir":"Blanca · por descubrir")}</span>
+        ${u.disc?`<div class="u-wines"><span class="uw-t">La probaste en</span>${w.map(esc).join("<br>")}</div>`:""}
+      </div>`}).join("")}
+  </div>
+  <p class="section-note">💡 ¿Sabías que la Tinta del País de Ribera del Duero y el Tempranillo de Rioja son la misma uva? Mismo ADN, carácter distinto. Eso es exactamente lo que estás aprendiendo a notar.</p>`;
+}
+
+/* =============== TUS BODEGAS =============== */
+function pBodegas(){
+  return `
+  <div class="page-head"><span class="eyebrow">Tus Bodegas</span><h2>${BODEGAS.length} bodegas en tu historia</h2>
+  <p>Detrás de cada botella hay una bodega, y detrás de cada bodega, un lugar. Estas ya forman parte de tu mapa.</p></div>
+  <div class="map-wrap">
+    <div class="map-card" id="bodegaMapCard">
+      ${spainSVG('<g id="bodegaNodes"></g>')}
+      <div class="map-legend"><span><i style="background:var(--dorado)"></i>Bodega descubierta</span></div>
+      <div class="map-tip" id="bodegaTip"></div>
+    </div>
+    <div class="bodega-list">
+      ${shuffled(BODEGAS).map(b=>`
+        <div class="bodega">
+          <span class="b-do">${esc(b.do)}</span>
+          <h3>${esc(b.n)}</h3>
+          <p>${esc(b.desc)}</p>
+        </div>`).join("")}
+      <div class="bodega" style="opacity:.5;text-align:center"><h3 style="font-size:1.6rem">?</h3><p>Dos bodegas nuevas llegan el 1 de agosto</p></div>
+    </div>
+  </div>`;
+}
+function initBodegaMap(){
+  const g=$("bodegaNodes"),tip=$("bodegaTip"),card=$("bodegaMapCard");
+  BODEGAS.forEach(b=>{
+    const node=document.createElementNS("http://www.w3.org/2000/svg","g");
+    node.setAttribute("class","bodega-node");
+    node.innerHTML=`<circle cx="${b.x}" cy="${b.y}" r="8"/>`;
+    node.addEventListener("mousemove",ev=>{
+      const r=card.getBoundingClientRect();
+      tip.style.opacity=1;
+      tip.style.left=Math.min(ev.clientX-r.left+14,r.width-240)+"px";
+      tip.style.top=(ev.clientY-r.top+14)+"px";
+      tip.innerHTML=`<span class="t-status">${esc(b.do)}</span><strong>${esc(b.n)}</strong>${esc(b.desc)}`;
+    });
+    node.addEventListener("mouseleave",()=>tip.style.opacity=0);
+    g.appendChild(node);
+  });
+}
+
+/* =============== TU PALADAR (calculado de tus votos) =============== */
+function calcPaladar(){
+  const rated=VINOS.filter(v=>v.rating>0);
+  if(!rated.length) return null;
+  const keys=["cuerpo","acidez","fruta","madera","mineral"];
+  const perfil={};
+  keys.forEach(k=>{
+    let num=0,den=0;
+    rated.forEach(v=>{num+=v.perfil[k]*v.rating;den+=v.rating});
+    perfil[k]=Math.round(num/den);
+  });
+  let tinto=0,blanco=0;
+  rated.forEach(v=>{v.tipo==="tinto"?tinto+=v.rating:blanco+=v.rating});
+  const pctT=Math.round(tinto/(tinto+blanco)*100);
+  /* uvas favoritas: media de copas por uva */
+  const uvaScore={};
+  rated.forEach(v=>v.uvas.forEach(u=>{(uvaScore[u]=uvaScore[u]||[]).push(v.rating)}));
+  const uvasFav=Object.entries(uvaScore).map(([u,rs])=>({u,m:rs.reduce((a,b)=>a+b)/rs.length}))
+    .sort((a,b)=>b.m-a.m);
+  /* DO favorita */
+  const doScore={};
+  rated.forEach(v=>{(doScore[v.do]=doScore[v.do]||[]).push(v.rating)});
+  const dosFav=Object.entries(doScore).map(([d,rs])=>({d,m:rs.reduce((a,b)=>a+b)/rs.length}))
+    .sort((a,b)=>b.m-a.m);
+  return {perfil,pctT,uvasFav,dosFav,rated};
+}
+function pPaladar(){
+  const p=calcPaladar();
+  if(!p) return `<div class="page-head"><span class="eyebrow">Tu Paladar</span><h2>Aún en blanco</h2>
+    <p>Valora tus vinos y aquí aparecerá el dibujo de tu gusto. Empieza por <button class="back-link" style="margin:0" onclick="goTab('vinos')">tus vinos →</button></p></div>`;
+  const topUva=p.uvasFav[0], topDo=p.dosFav[0];
+  const insight = p.pctT>=55
+    ? `"Te tiran los ${p.perfil.cuerpo>=60?"tintos con cuerpo":"tintos ligeros"} y la ${topUva.u} te tiene ganada. Pero ojo a lo que dicen tus copas de los blancos… hay una historia ahí."`
+    : `"Los blancos van ganando la partida en tus copas — y la ${topUva.u} encabeza la lista. La próxima etapa puede cambiarlo todo."`;
+  return `
+  <div class="page-head"><span class="eyebrow">Tu Paladar</span><h2>Así va tomando forma tu gusto</h2>
+  <p>Todo lo que ves aquí sale de tus copas: cruzamos tus valoraciones con el perfil de cada vino y sus uvas. Cuantos más vinos votes, más nítido será el dibujo. Has valorado ${p.rated.length} de ${VINOS.length} vinos.</p></div>
+  <div class="pal-grid">
+    <div class="card">
+      <h3 class="serif" style="font-size:1.35rem;color:var(--verde);margin-bottom:1.2rem">Tu perfil de preferencias</h3>
+      ${Object.entries(p.perfil).map(([k,val])=>`
+        <div class="prof-bar"><div class="p-lab"><span>${PERFIL_LABELS[k]}</span><span>${nivel(val)}</span></div>
+        <div class="track"><div class="fill" data-w="${val}%"></div></div></div>`).join("")}
+      <div class="split-lab" style="margin-top:1.4rem"><span>Tinto ${p.pctT}%</span><span>Blanco ${100-p.pctT}%</span></div>
+      <div class="split"><div class="s-t" style="width:${p.pctT}%"></div><div class="s-b" style="width:${100-p.pctT}%"></div></div>
+      <p style="font-size:.68rem;opacity:.5">Reparto de tus copas otorgadas</p>
+      <p class="pal-insight">${insight}</p>
+    </div>
+    <div class="card">
+      <h3 class="serif" style="font-size:1.35rem;color:var(--verde);margin-bottom:.6rem">Tus mejor valorados</h3>
+      ${p.rated.slice().sort((a,b)=>b.rating-a.rating).map(v=>`
+        <div class="top-vino"><span><span class="w-type ${v.tipo}"></span>${esc(v.n)} ${v.anio}<br><span style="font-size:.7rem;opacity:.6">${esc(v.do)} · ${v.uvas.map(esc).join(", ")}</span></span>
+        <span style="color:var(--tinto)">${"🍷".repeat(v.rating)}</span></div>`).join("")}
+      <h3 class="serif" style="font-size:1.15rem;color:var(--verde);margin:1.4rem 0 .4rem">Tus uvas favoritas</h3>
+      <p style="font-size:.86rem">${p.uvasFav.map((u,i)=>`${i+1}. <strong>${esc(u.u)}</strong> (${u.m.toFixed(1)} copas de media)`).join("<br>")}</p>
+      <p class="section-note">Tu DO mejor valorada hasta ahora: <strong>${esc(topDo.d)}</strong> con ${topDo.m.toFixed(1)} copas de media.</p>
+    </div>
+  </div>`;
+}
+
+/* =============== MI CUENTA =============== */
+function pCuenta(){
+  return `
+  <div class="page-head"><span class="eyebrow">Mi Cuenta</span><h2>Tu suscripción, bajo control</h2>
+  <p>Aquí mandas tú: pausa, reactiva o cancela con un solo clic. Sin llamadas, sin letra pequeña.</p></div>
+  <div class="cuenta-grid">
+    <div class="card">
+      <h3>Suscripción</h3>
+      <div class="sub-status"><span class="dot ${suscripcion.activa?"":"paused"}"></span>
+      <strong>${suscripcion.activa?"Activa":"En pausa"}</strong>
+      <span style="opacity:.6;font-size:.85rem">· 25,00 € + 1,95 € envío</span></div>
+      <div class="field"><label>Periodicidad</label>
+        <select id="perio" onchange="cambiaPerio()">
+          <option value="1" ${suscripcion.periodicidad==="1"?"selected":""}>Cada mes</option>
+          <option value="2" ${suscripcion.periodicidad==="2"?"selected":""}>Cada dos meses</option>
+        </select></div>
+      <p style="font-size:.88rem;margin-bottom:1.2rem">Próxima entrega: <strong>${suscripcion.proxima}</strong> · Etapa 05 (secreta 🤫)</p>
+      ${suscripcion.activa
+        ? `<button class="btn btn-outline btn-sm" onclick="pausar()">Pausar suscripción</button>
+           <button class="btn btn-tinto btn-sm" onclick="cancelar()" style="margin-left:.5rem">Cancelar suscripción</button>`
+        : `<button class="btn btn-verde btn-sm" onclick="reactivar()">Reactivar suscripción</button>`}
+      <p class="one-click">Un clic. De verdad. Sin preguntas raras, aunque nos dará pena.</p>
+    </div>
+    <div class="card">
+      <h3>Tus datos</h3>
+      <div class="field"><label>Nombre</label><input value="Ana García" readonly></div>
+      <div class="field"><label>Email</label><input value="ana@email.com" readonly></div>
+      <div class="field"><label>Dirección de entrega</label><input value="Calle Ejemplo 12, 3º2ª · 08000 Barcelona" readonly></div>
+      <div class="field"><label>Método de pago</label><input value="Visa terminada en 4242" readonly></div>
+      <button class="btn btn-outline btn-sm" onclick="toast('Edición de datos disponible con el backend real')">Editar datos</button>
+    </div>
+  </div>
+  <div class="card" style="margin-top:1.2rem">
+    <h3 class="serif" style="font-size:1.35rem;color:var(--verde);margin-bottom:.8rem">Historial de pedidos</h3>
+    <table>
+      <thead><tr><th>Pedido</th><th>Fecha</th><th>Etapa</th><th>Importe</th><th>Estado</th></tr></thead>
+      <tbody>${pedidos.map(p=>`<tr><td>${p.id}</td><td>${p.fecha}</td><td>${esc(p.etapa)}</td><td>${p.importe}</td><td><span class="pill pill-lima">${p.estado}</span></td></tr>`).join("")}</tbody>
+    </table>
+  </div>
+  <p style="margin-top:1.6rem"><button class="btn btn-outline btn-sm" onclick="logout()">Cerrar sesión</button></p>
+  <p class="demo-note">Demo — nada se guarda ni se cobra. La conexión real de pagos llegará con el backend.</p>`;
+}
+function cambiaPerio(){
+  suscripcion.periodicidad=$("perio").value;
+  toast(suscripcion.periodicidad==="1"?"Recibirás tu VINA cada mes":"Recibirás tu VINA cada dos meses");
+}
+function pausar(){suscripcion.activa=false;render("cuenta");toast("Suscripción en pausa. Tu viaje te espera donde lo dejaste 🍷")}
+function reactivar(){suscripcion.activa=true;render("cuenta");toast("¡De vuelta al viaje!")}
+function cancelar(){suscripcion.activa=false;render("cuenta");toast("Suscripción cancelada con un clic, como prometimos. (demo)")}
+</script>
+</body>
+</html>

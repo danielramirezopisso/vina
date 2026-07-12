@@ -54,6 +54,15 @@ a{color:inherit}
 .tabs button:hover{opacity:1}
 .tabs button.active{opacity:1;border-bottom-color:var(--lima)}
 .hello{font-size:.75rem;opacity:.75}
+.top-right{display:flex;align-items:center;gap:1rem}
+.top-link{font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;text-decoration:none;opacity:.7}
+.top-link:hover{opacity:1}
+.top-salir{
+  background:none;border:1px solid rgba(244,240,230,.35);color:var(--crema);border-radius:2px;
+  padding:.35rem .8rem;font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;font-weight:600;
+  transition:background .25s,color .25s;
+}
+.top-salir:hover{background:var(--crema);color:var(--verde)}
 main{max-width:1160px;margin:0 auto;padding:2.6rem 4vw 5rem}
 .page-head{margin-bottom:2rem}
 .page-head .eyebrow{display:block;margin-bottom:.4rem}
@@ -107,19 +116,28 @@ main{max-width:1160px;margin:0 auto;padding:2.6rem 4vw 5rem}
 .do-item .d-name{font-family:'Fraunces',serif;font-size:1rem;color:var(--verde)}
 
 /* ---------- vinos ---------- */
-.wine-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:1.1rem}
-.wine-card{background:var(--card);border:1px solid var(--line);border-radius:2px;padding:1.3rem;display:flex;flex-direction:column;gap:.35rem;transition:transform .25s,box-shadow .25s;cursor:pointer;text-align:left}
+.wine-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:1.1rem}
+.wine-card{
+  background:var(--card);border:1px solid var(--line);border-radius:2px;
+  padding:1.4rem 1rem 1.2rem;display:flex;flex-direction:column;align-items:center;
+  text-align:center;gap:.3rem;min-height:300px;
+  transition:transform .25s,box-shadow .25s;cursor:pointer;
+}
 .wine-card:not(.locked):hover{transform:translateY(-3px);box-shadow:0 12px 28px rgba(18,41,29,.12)}
 .wine-card .w-do{font-size:.6rem;letter-spacing:.24em;text-transform:uppercase;color:var(--tinto);font-weight:600}
-.wine-card h3{font-size:1.25rem;color:var(--verde);line-height:1.2}
-.wine-card .w-meta{font-size:.76rem;opacity:.65}
-.wine-card .w-open{font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--tinto);margin-top:.5rem;font-weight:600}
-.wine-card.locked{background:repeating-linear-gradient(-45deg,var(--crema-2),var(--crema-2) 8px,var(--card) 8px,var(--card) 16px);opacity:.75;align-items:center;justify-content:center;text-align:center;min-height:200px;cursor:default}
-.wine-card.locked .q{font-family:'Fraunces',serif;font-size:2.4rem;color:var(--gris)}
+.wine-card h3{font-size:1.15rem;color:var(--verde);line-height:1.25}
+.wine-card .w-meta{font-size:.74rem;opacity:.65}
+.wine-card .w-open{font-size:.64rem;letter-spacing:.16em;text-transform:uppercase;color:var(--tinto);margin-top:auto;padding-top:.5rem;font-weight:600}
+.wine-card.locked{
+  background:repeating-linear-gradient(-45deg,var(--crema-2),var(--crema-2) 8px,var(--card) 8px,var(--card) 16px);
+  opacity:.75;justify-content:center;cursor:default;
+}
+.wine-card.locked .q{font-family:'Fraunces',serif;font-size:2.6rem;color:var(--gris);line-height:1}
 .wine-card.locked p{font-size:.75rem;opacity:.65}
-.mini-bottle{height:110px;display:flex;justify-content:center;margin-bottom:.5rem}
+.mini-bottle{height:125px;display:flex;align-items:flex-end;justify-content:center;margin-bottom:.5rem}
 .mini-bottle svg{height:100%}
 .copas{display:flex;gap:.1rem;margin-top:.3rem}
+.wine-card .copas{justify-content:center}
 .copas button{background:none;border:none;font-size:1.1rem;padding:0 .06rem;transition:transform .15s;filter:grayscale(1);opacity:.28}
 .copas button.on{filter:none;opacity:1}
 .copas button:hover{transform:scale(1.22)}
@@ -151,7 +169,10 @@ main{max-width:1160px;margin:0 auto;padding:2.6rem 4vw 5rem}
 .uva.b .u-dot{background:radial-gradient(circle at 35% 30%,#E8DFA8,#C7A94B)}
 .uva h3{font-size:1.1rem;color:var(--verde)}
 .uva .u-sub{font-size:.68rem;opacity:.6}
-.uva.locked{opacity:.42}
+.uva.locked{
+  opacity:.6;
+  background:repeating-linear-gradient(-45deg,var(--crema-2),var(--crema-2) 8px,var(--card) 8px,var(--card) 16px);
+}
 .uva.locked .u-dot{background:var(--crema-2);color:var(--gris)}
 .uva .u-wines{
   position:absolute;inset:0;background:var(--verde);color:var(--crema);
@@ -234,7 +255,11 @@ tr:last-child td{border-bottom:none}
       <button data-page="paladar">Tu Paladar</button>
       <button data-page="cuenta">Mi Cuenta</button>
     </div>
-    <span class="hello">Hola, Ana 🍷</span>
+    <div class="top-right">
+      <a class="top-link" href="index.html">← Web</a>
+      <span class="hello">Hola, Ana 🍷</span>
+      <button class="top-salir" onclick="logout()">Salir</button>
+    </div>
   </div>
   <main id="pageRoot"></main>
 </div>
@@ -373,22 +398,29 @@ function spainSVG(inner){
     <ellipse cx="838" cy="300" rx="13" ry="7" fill="#193527" stroke="rgba(199,216,167,.3)" stroke-width="1"/>
     ${inner}</svg>`;
 }
-function bottleSVG(v,h=340){
-  const glass = v.tipo==="tinto" ? "#0C1E15" : "#E9E2C8";
-  const glassStroke = v.tipo==="tinto" ? "rgba(199,216,167,.5)" : "rgba(122,34,49,.35)";
+function bottleSVG(v,h=340,mini=false){
+  const glass = v.tipo==="tinto" ? "#122A20" : "#EFE8CF";
+  const stroke = v.tipo==="tinto" ? "rgba(18,41,29,.55)" : "rgba(122,34,49,.3)";
   const label = v.tipo==="tinto" ? "#F4F0E6" : "#12291D";
-  const labelTxt = v.tipo==="tinto" ? "#12291D" : "#F4F0E6";
-  const capsula = v.tipo==="tinto" ? "#7A2231" : "#C7A94B";
+  const band = v.tipo==="tinto" ? "#7A2231" : "#C7A94B";
+  const txt = v.tipo==="tinto" ? "#12291D" : "#F4F0E6";
   const sub = v.tipo==="tinto" ? "#7A2231" : "#C7D8A7";
-  return `<svg viewBox="0 0 100 360" height="${h}" xmlns="http://www.w3.org/2000/svg" aria-label="Botella de ${esc(v.n)}">
-    <path d="M42 8 h16 v16 c0 6 1 10 3 16 l7 20 c3 9 4 18 4 28 v230 c0 16 -11 30 -22 30 s-22 -14 -22 -30 V88 c0 -10 1 -19 4 -28 l7 -20 c2 -6 3 -10 3 -16 z"
-      fill="${glass}" stroke="${glassStroke}" stroke-width="1.5"/>
-    <rect x="38" y="8" width="24" height="30" fill="${capsula}"/>
-    <rect x="22" y="160" width="56" height="96" rx="2" fill="${label}"/>
-    <text x="50" y="196" text-anchor="middle" font-family="Fraunces,serif" font-size="15" letter-spacing="4" fill="${labelTxt}">VINA</text>
-    <line x1="32" y1="206" x2="68" y2="206" stroke="${sub}" stroke-width=".8"/>
-    <text x="50" y="222" text-anchor="middle" font-family="Work Sans,sans-serif" font-size="7.5" letter-spacing="1" fill="${sub}">${esc(v.do.toUpperCase().slice(0,18))}</text>
-    <text x="50" y="236" text-anchor="middle" font-family="Work Sans,sans-serif" font-size="7" letter-spacing="1" fill="${labelTxt}" opacity=".7">${v.anio}</text>
+  const sheen = v.tipo==="tinto" ? "rgba(199,216,167,.18)" : "rgba(255,255,255,.5)";
+  const labelH = mini ? 66 : 92;
+  const detail = mini ? "" : `
+    <text x="50" y="182" text-anchor="middle" font-family="Fraunces,serif" font-size="14" letter-spacing="4" fill="${txt}">VINA</text>
+    <line x1="33" y1="192" x2="67" y2="192" stroke="${sub}" stroke-width=".8"/>
+    <text x="50" y="208" text-anchor="middle" font-family="Work Sans,sans-serif" font-size="7.5" letter-spacing="1" fill="${sub}">${esc(v.do.toUpperCase().slice(0,18))}</text>
+    <text x="50" y="222" text-anchor="middle" font-family="Work Sans,sans-serif" font-size="7" letter-spacing="1.5" fill="${txt}" opacity=".7">${v.anio}</text>`;
+  return `<svg viewBox="0 0 100 340" height="${h}" xmlns="http://www.w3.org/2000/svg" aria-label="Botella de ${esc(v.n)}">
+    <ellipse cx="50" cy="328" rx="25" ry="5" fill="rgba(20,22,19,.1)"/>
+    <path d="M42 10 h16 v14 c0 6 1 10 3 15 l6 18 c3 9 4 17 4 26 v212 c0 15 -10 27 -21 27 s-21 -12 -21 -27 V83 c0 -9 1 -17 4 -26 l6 -18 c2 -5 3 -9 3 -15 z"
+      fill="${glass}" stroke="${stroke}" stroke-width="1.4"/>
+    <path d="M36 96 v200" stroke="${sheen}" stroke-width="3" stroke-linecap="round"/>
+    <rect x="38" y="10" width="24" height="26" rx="1" fill="${band}"/>
+    <rect x="24" y="150" width="52" height="${labelH}" rx="1.5" fill="${label}"/>
+    <rect x="24" y="${150+labelH-7}" width="52" height="7" fill="${band}"/>
+    ${detail}
   </svg>`;
 }
 const PERFIL_LABELS = {cuerpo:"Cuerpo",acidez:"Acidez",fruta:"Fruta",madera:"Madera",mineral:"Mineralidad"};
@@ -521,14 +553,14 @@ function pVinos(){
   <p>Tu colección crece con cada entrega. Entra en cada botella para ver su ficha completa y su perfil — y valórala con copas para dar forma a tu paladar.</p></div>
   <div class="wine-grid">
     ${orden.map(i=>{const v=VINOS[i];return `
-      <button class="wine-card" onclick="openWine(${i})">
-        <div class="mini-bottle">${bottleSVG(v,110)}</div>
+      <div class="wine-card" role="button" tabindex="0" onclick="openWine(${i})" onkeydown="if(event.key==='Enter')openWine(${i})">
+        <div class="mini-bottle">${bottleSVG(v,125,true)}</div>
         <span class="w-do">${esc(v.do)}</span>
-        <h3><span class="w-type ${v.tipo}"></span>${esc(v.n)} ${v.anio}</h3>
-        <span class="w-meta">${v.uvas.map(esc).join(" · ")}</span>
+        <h3>${esc(v.n)} ${v.anio}</h3>
+        <span class="w-meta"><span class="w-type ${v.tipo}"></span>${v.uvas.map(esc).join(" · ")}</span>
         ${copas(i,v.rating,true)}
         <span class="w-open">Ver ficha →</span>
-      </button>`}).join("")}
+      </div>`}).join("")}
     <div class="wine-card locked"><span class="q">?</span><p><strong>Etapa 05</strong><br>Se revela el 1 de agosto</p></div>
     <div class="wine-card locked"><span class="q">?</span><p><strong>Etapa 05</strong><br>Se revela el 1 de agosto</p></div>
   </div>

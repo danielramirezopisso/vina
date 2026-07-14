@@ -53,6 +53,8 @@ h1 em{font-style:italic;color:var(--lima)}
 .hero-note{margin-top:1.4rem;font-size:.78rem;opacity:.55}
 
 /* mapa hero */
+.hm-card{background:var(--crema);border-radius:18px;padding:1rem;box-shadow:0 30px 70px rgba(0,0,0,.4)}
+.hm-card img{width:100%;height:auto;display:block}
 .hero-map{position:relative}
 .hero-map svg{width:100%;height:auto}
 .hm-node{fill:#2A4536;stroke:rgba(244,240,230,.25);stroke-width:1}
@@ -192,39 +194,8 @@ footer a:hover{color:var(--crema)}
       <p class="hero-note">Cancela cuando quieras, con un solo clic. De verdad.</p>
     </div>
     <div class="hero-map" aria-hidden="true">
-      <svg viewBox="60 80 800 580" xmlns="http://www.w3.org/2000/svg">
-        <path d="M95 175 C100 150 130 132 160 128 C230 118 320 112 420 108 C455 106 500 110 540 116 C560 118 590 128 620 142 C660 160 700 175 740 192 C755 198 762 205 755 218 C742 240 725 258 705 278 C688 296 675 312 665 330 C652 355 645 378 640 398 C636 420 650 438 662 448 C670 456 668 468 660 476 C645 492 630 505 618 512 C605 520 588 528 572 532 C550 538 530 548 512 556 C490 566 468 574 448 582 C428 590 405 600 385 612 C372 620 355 622 342 612 C322 598 300 585 285 570 C272 558 262 548 258 535 C253 520 258 505 262 490 C266 474 258 460 250 448 C242 434 244 418 252 404 C258 392 254 376 246 364 C238 350 240 332 248 318 C254 306 250 290 242 278 C232 262 228 246 230 232 C231 220 222 212 210 210 C185 206 160 215 138 222 C118 228 100 215 96 198 C94 190 94 182 95 175 Z"
-          fill="#193527" stroke="rgba(199,216,167,.35)" stroke-width="1.5"/>
-        <ellipse cx="800" cy="330" rx="26" ry="14" fill="#193527" stroke="rgba(199,216,167,.3)" stroke-width="1"/>
-        <ellipse cx="758" cy="356" rx="12" ry="8" fill="#193527" stroke="rgba(199,216,167,.3)" stroke-width="1"/>
-        <ellipse cx="838" cy="300" rx="13" ry="7" fill="#193527" stroke="rgba(199,216,167,.3)" stroke-width="1"/>
-        <!-- descubiertas -->
-        <circle class="hm-node lit" cx="455" cy="206" r="9"/>
-        <circle class="hm-node lit" cx="382" cy="284" r="9"/>
-        <circle class="hm-node lit" cx="115" cy="205" r="9"/>
-        <circle class="hm-node lit" cx="660" cy="298" r="9"/>
-        <!-- una que se enciende sola, en bucle -->
-        <circle class="hm-node pulse" cx="325" cy="582" r="6.5"/>
-        <!-- por descubrir -->
-        <circle class="hm-node" cx="150" cy="225" r="6.5"/><circle class="hm-node" cx="182" cy="200" r="6.5"/>
-        <circle class="hm-node" cx="212" cy="220" r="6.5"/><circle class="hm-node" cx="247" cy="214" r="6.5"/>
-        <circle class="hm-node" cx="285" cy="300" r="6.5"/><circle class="hm-node" cx="322" cy="316" r="6.5"/>
-        <circle class="hm-node" cx="330" cy="274" r="6.5"/><circle class="hm-node" cx="505" cy="180" r="6.5"/>
-        <circle class="hm-node" cx="480" cy="140" r="6.5"/><circle class="hm-node" cx="600" cy="190" r="6.5"/>
-        <circle class="hm-node" cx="530" cy="240" r="6.5"/><circle class="hm-node" cx="505" cy="272" r="6.5"/>
-        <circle class="hm-node" cx="556" cy="260" r="6.5"/><circle class="hm-node" cx="640" cy="234" r="6.5"/>
-        <circle class="hm-node" cx="728" cy="214" r="6.5"/><circle class="hm-node" cx="700" cy="268" r="6.5"/>
-        <circle class="hm-node" cx="643" cy="282" r="6.5"/><circle class="hm-node" cx="618" cy="302" r="6.5"/>
-        <circle class="hm-node" cx="615" cy="400" r="6.5"/><circle class="hm-node" cx="570" cy="394" r="6.5"/>
-        <circle class="hm-node" cx="545" cy="422" r="6.5"/><circle class="hm-node" cx="614" cy="455" r="6.5"/>
-        <circle class="hm-node" cx="580" cy="460" r="6.5"/><circle class="hm-node" cx="555" cy="476" r="6.5"/>
-        <circle class="hm-node" cx="540" cy="506" r="6.5"/><circle class="hm-node" cx="450" cy="420" r="6.5"/>
-        <circle class="hm-node" cx="436" cy="470" r="6.5"/><circle class="hm-node" cx="372" cy="382" r="6.5"/>
-        <circle class="hm-node" cx="402" cy="350" r="6.5"/><circle class="hm-node" cx="300" cy="455" r="6.5"/>
-        <circle class="hm-node" cx="290" cy="552" r="6.5"/><circle class="hm-node" cx="430" cy="568" r="6.5"/>
-        <circle class="hm-node" cx="375" cy="520" r="6.5"/>
-      </svg>
-      <p class="hm-caption"><strong>4 de 38</strong> denominaciones descubiertas · el resto te espera</p>
+      <div class="hm-card"><img src="dos-map.svg" alt="Mapa de las Denominaciones de Origen del vino en España" loading="lazy"></div>
+      <p class="hm-caption"><strong>96 denominaciones reales</strong> en tu mapa · cada botella enciende una</p>
     </div>
   </div>
 </header>

@@ -49,6 +49,13 @@ a{color:inherit}
 .topbar{background:var(--verde);color:var(--crema);padding:1rem 4vw;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;position:sticky;top:0;z-index:40}
 .topbar .logo{font-family:'Fraunces',serif;font-size:1.25rem;letter-spacing:.3em;text-decoration:none}
 .topbar .logo span{color:var(--lima)}
+.realmap svg{width:100%;height:auto;display:block}
+.realmap .es{fill:#1C3A2A !important;stroke:rgba(244,240,230,.15) !important}
+.realmap .zone{fill:#2A4536 !important;stroke:rgba(244,240,230,.22) !important;stroke-width:.5 !important}
+.realmap .zone:hover{filter:brightness(1.4)}
+.realmap .zone.disc{fill:var(--lima) !important;stroke:rgba(255,255,255,.85) !important;stroke-width:.8 !important}
+.realmap .frame{stroke:rgba(244,240,230,.3) !important}
+.realmap .attr{fill:rgba(244,240,230,.4) !important}
 .tabs{display:flex;gap:.2rem;flex-wrap:wrap}
 .tabs button{background:none;border:none;color:var(--crema);opacity:.7;padding:.5rem .9rem;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;border-bottom:2px solid transparent;transition:opacity .25s,border-color .25s}
 .tabs button:hover{opacity:1}
@@ -509,11 +516,11 @@ function pDOs(){
   const disc=DOS.filter(d=>d.disc).length;
   const lista=shuffled(DOS);
   return `
-  <div class="page-head"><span class="eyebrow">Tus DOs</span><h2>${disc} de ${DOS.length} denominaciones descubiertas</h2>
-  <p>Pasa el ratón por el mapa: en color, las que ya has probado. En gris, todo lo que te queda por delante. Pronto podrás sumergirte región a región — Galicia, Andalucía, Cataluña — con mapas de detalle.</p></div>
+  <div class="page-head"><span class="eyebrow">Tus DOs</span><h2>${disc} de 96 denominaciones descubiertas</h2>
+  <p>El mapa oficial de las zonas vitícolas de España, frontera a frontera. En lima, las que ya has probado; en penumbra, todo lo que te queda por delante.</p></div>
   <div class="map-wrap">
     <div class="map-card" id="mapCard">
-      ${spainSVG('<g id="doNodes"></g><text x="800" y="385" text-anchor="middle" font-size="10" fill="rgba(244,240,230,.4)" letter-spacing="2" font-family="Work Sans">BALEARES</text>')}
+      <div class="realmap" id="realMap"><p style="text-align:center;padding:3rem 1rem;opacity:.5;font-size:.8rem">Desplegando el mapa oficial…</p></div>
       <div class="map-legend">
         <span><i style="background:var(--lima)"></i>Descubierta</span>
         <span><i style="background:#2A4536;border:1px solid rgba(244,240,230,.3)"></i>Por descubrir</span>
@@ -530,23 +537,38 @@ function pDOs(){
     </div>
   </div>`;
 }
-function initMap(){
-  const g=$("doNodes"),tip=$("mapTip"),card=$("mapCard");
-  DOS.forEach(d=>{
-    const node=document.createElementNS("http://www.w3.org/2000/svg","g");
-    node.setAttribute("class","do-node"+(d.disc?" disc":""));
-    node.innerHTML=`<circle cx="${d.x}" cy="${d.y}" r="${d.disc?9:6.5}"/>`;
-    node.addEventListener("mousemove",ev=>{
-      const r=card.getBoundingClientRect();
-      tip.style.opacity=1;
-      tip.style.left=Math.min(ev.clientX-r.left+14,r.width-240)+"px";
-      tip.style.top=(ev.clientY-r.top+14)+"px";
-      tip.innerHTML = d.disc
+const DO_ALIAS = {
+  "getariako-txakolina":"chacoli-de-getaria-getariako-txakolina",
+  "emporda":"ampurdan-costa-brava",
+  "penedes":"penedes-comunidad-de-cataluna",
+  "priorat":"priorato-comunidad-de-cataluna",
+};
+function doSlug(n){
+  const s = n.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+  return DO_ALIAS[s] || s;
+}
+async function initMap(){
+  const box=$("realMap"), tip=$("mapTip"), card=$("mapCard");
+  if(!box) return;
+  try{
+    const res = await fetch("dos-map.svg");
+    box.innerHTML = await res.text();
+  }catch(e){ box.innerHTML = '<p style="padding:2rem;opacity:.6">El mapa no ha podido cargarse.</p>'; return; }
+  const byId = {};
+  DOS.forEach(d=>{ byId[doSlug(d.n)] = d; });
+  box.querySelectorAll("path.zone").forEach(pz=>{
+    const d = byId[pz.id];
+    if(d && d.disc) pz.classList.add("disc");
+    pz.addEventListener("mousemove", ev=>{
+      const r = card.getBoundingClientRect();
+      tip.style.opacity = 1;
+      tip.style.left = Math.min(ev.clientX-r.left+14, r.width-240)+"px";
+      tip.style.top  = (ev.clientY-r.top+14)+"px";
+      tip.innerHTML = (d && d.disc)
         ? `<span class="t-status">Descubierta · ${esc(d.fecha)}</span><strong>${esc(d.n)}</strong>${esc(d.reg)}<br>${esc(d.nota||"")}`
-        : `<span class="t-status" style="color:var(--gris)">Por descubrir</span><strong>?????</strong>${esc(d.reg)}`;
+        : `<span class="t-status" style="color:var(--gris)">Por descubrir</span><strong>?????</strong>Sigue el viaje para revelarla`;
     });
-    node.addEventListener("mouseleave",()=>tip.style.opacity=0);
-    g.appendChild(node);
+    pz.addEventListener("mouseleave", ()=> tip.style.opacity = 0);
   });
 }
 

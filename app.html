@@ -51,9 +51,18 @@ a{color:inherit}
 .topbar .logo span{color:var(--lima)}
 .realmap svg{width:100%;height:auto;display:block}
 .realmap .es{fill:#1C3A2A !important;stroke:rgba(244,240,230,.15) !important}
-.realmap .zone{fill:#2A4536 !important;stroke:rgba(244,240,230,.22) !important;stroke-width:.5 !important}
-.realmap .zone:hover{filter:brightness(1.4)}
+.realmap .zone{fill:#4A2531 !important;stroke:rgba(244,240,230,.25) !important;stroke-width:.6 !important}
+.realmap .zone:hover{filter:brightness(1.55)}
+.map-zoom{display:flex;gap:.35rem;flex-wrap:wrap;margin-bottom:.7rem}
+.map-zoom button{
+  background:rgba(244,240,230,.08);border:1px solid rgba(244,240,230,.2);color:var(--crema);
+  border-radius:999px;padding:.32rem .75rem;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;
+  transition:all .2s;
+}
+.map-zoom button:hover{background:rgba(244,240,230,.16)}
+.map-zoom button.active{background:var(--lima);color:var(--verde);border-color:var(--lima);font-weight:600}
 .realmap .zone.disc{fill:var(--lima) !important;stroke:rgba(255,255,255,.85) !important;stroke-width:.8 !important}
+.realmap .zone.doca.disc{stroke:var(--dorado) !important;stroke-width:1.6 !important}
 .realmap .frame{stroke:rgba(244,240,230,.3) !important}
 .realmap .attr{fill:rgba(244,240,230,.4) !important}
 .tabs{display:flex;gap:.2rem;flex-wrap:wrap}
@@ -516,15 +525,17 @@ function pDOs(){
   const disc=DOS.filter(d=>d.disc).length;
   const lista=shuffled(DOS);
   return `
-  <div class="page-head"><span class="eyebrow">Tus DOs</span><h2>${disc} de 96 denominaciones descubiertas</h2>
+  <div class="page-head"><span class="eyebrow">Tus DOs</span><h2>${disc} de 76 denominaciones descubiertas</h2>
   <p>El mapa oficial de las zonas vitícolas de España, frontera a frontera. En lima, las que ya has probado; en penumbra, todo lo que te queda por delante.</p></div>
   <div class="map-wrap">
     <div class="map-card" id="mapCard">
+      <div class="map-zoom" id="mapZoom"></div>
       <div class="realmap" id="realMap"><p style="text-align:center;padding:3rem 1rem;opacity:.5;font-size:.8rem">Desplegando el mapa oficial…</p></div>
       <div class="map-legend">
         <span><i style="background:var(--lima)"></i>Descubierta</span>
-        <span><i style="background:#2A4536;border:1px solid rgba(244,240,230,.3)"></i>Por descubrir</span>
+        <span><i style="background:#4A2531;border:1px solid rgba(244,240,230,.3)"></i>Por descubrir</span>
       </div>
+      <p style="font-size:.55rem;opacity:.35;margin-top:.5rem">Cartografía: © Ministerio de Agricultura, Pesca y Alimentación · CC BY 4.0 · Fondo: Natural Earth</p>
       <div class="map-tip" id="mapTip"></div>
     </div>
     <div class="do-list">
@@ -547,6 +558,34 @@ function doSlug(n){
   const s = n.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
   return DO_ALIAS[s] || s;
 }
+const REGION_VIEWS = {
+  "Todo":[0,0,1000,746], "Galicia":[159.5,1.4,179.8,180], "Duero":[291.4,56.2,323.7,195.6],
+  "Rioja y Norte":[525.2,24.9,227.8,195.6], "Cataluña":[728.9,95.3,209.8,180],
+  "Centro":[285.4,204.8,395.6,266], "Levante":[585.1,244,191.8,273.9],
+  "Andalucía":[267.4,400.4,371.6,234.7], "Baleares":[788.9,283.1,209.8,148.7],
+  "Canarias":[0,556.9,309.4,203.4],
+};
+function buildZoomChips(){
+  const z=$("mapZoom"); if(!z) return;
+  z.innerHTML = Object.keys(REGION_VIEWS).map((r,i)=>
+    `<button class="${i===0?"active":""}" data-r="${r}">${r}</button>`).join("");
+  z.addEventListener("click",e=>{
+    const b=e.target.closest("button"); if(!b) return;
+    z.querySelectorAll("button").forEach(x=>x.classList.toggle("active",x===b));
+    zoomTo(REGION_VIEWS[b.dataset.r]);
+  });
+}
+function zoomTo(vb){
+  const svg=$("realMap") && $("realMap").querySelector("svg"); if(!svg) return;
+  const from=svg.getAttribute("viewBox").split(/\s+/).map(Number);
+  const t0=performance.now(), dur=650;
+  function step(t){
+    const k=Math.min(1,(t-t0)/dur), e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;
+    svg.setAttribute("viewBox", from.map((f,i)=>(f+(vb[i]-f)*e).toFixed(1)).join(" "));
+    if(k<1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
 async function initMap(){
   const box=$("realMap"), tip=$("mapTip"), card=$("mapCard");
   if(!box) return;
@@ -556,6 +595,7 @@ async function initMap(){
   }catch(e){ box.innerHTML = '<p style="padding:2rem;opacity:.6">El mapa no ha podido cargarse.</p>'; return; }
   const byId = {};
   DOS.forEach(d=>{ byId[doSlug(d.n)] = d; });
+  buildZoomChips();
   box.querySelectorAll("path.zone").forEach(pz=>{
     const d = byId[pz.id];
     if(d && d.disc) pz.classList.add("disc");
@@ -564,9 +604,11 @@ async function initMap(){
       tip.style.opacity = 1;
       tip.style.left = Math.min(ev.clientX-r.left+14, r.width-240)+"px";
       tip.style.top  = (ev.clientY-r.top+14)+"px";
+      const isDOCa = pz.classList.contains("doca");
+      const crown = isDOCa ? ` <span style="color:var(--dorado)">👑 D.O. Calificada</span>` : "";
       tip.innerHTML = (d && d.disc)
-        ? `<span class="t-status">Descubierta · ${esc(d.fecha)}</span><strong>${esc(d.n)}</strong>${esc(d.reg)}<br>${esc(d.nota||"")}`
-        : `<span class="t-status" style="color:var(--gris)">Por descubrir</span><strong>?????</strong>Sigue el viaje para revelarla`;
+        ? `<span class="t-status">Descubierta · ${esc(d.fecha)}${crown}</span><strong>${esc(d.n)}</strong>${esc(d.reg)}<br>${esc(d.nota||"")}`
+        : `<span class="t-status" style="color:var(--gris)">Por descubrir${crown}</span><strong>?????</strong>${isDOCa?"Una de las dos joyas de la corona española":"Sigue el viaje para revelarla"}`;
     });
     pz.addEventListener("mouseleave", ()=> tip.style.opacity = 0);
   });

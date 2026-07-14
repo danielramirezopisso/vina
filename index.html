@@ -53,8 +53,7 @@ h1 em{font-style:italic;color:var(--lima)}
 .hero-note{margin-top:1.4rem;font-size:.78rem;opacity:.55}
 
 /* mapa hero */
-.hm-card{background:var(--crema);border-radius:18px;padding:1rem;box-shadow:0 30px 70px rgba(0,0,0,.4)}
-.hm-card img{width:100%;height:auto;display:block}
+.hm-real{width:100%;height:auto;display:block;filter:drop-shadow(0 22px 44px rgba(0,0,0,.5))}
 .hero-map{position:relative}
 .hero-map svg{width:100%;height:auto}
 .hm-node{fill:#2A4536;stroke:rgba(244,240,230,.25);stroke-width:1}
@@ -194,8 +193,9 @@ footer a:hover{color:var(--crema)}
       <p class="hero-note">Cancela cuando quieras, con un solo clic. De verdad.</p>
     </div>
     <div class="hero-map" aria-hidden="true">
-      <div class="hm-card"><img src="dos-map.svg" alt="Mapa de las Denominaciones de Origen del vino en España" loading="lazy"></div>
-      <p class="hm-caption"><strong>96 denominaciones reales</strong> en tu mapa · cada botella enciende una</p>
+      <img class="hm-real" src="dos-map.svg" alt="Mapa de las Denominaciones de Origen del vino en España" loading="lazy">
+      <p class="hm-caption"><strong>Las 76 Denominaciones de Origen</strong> en tu mapa · cada botella enciende una</p>
+      <p style="font-size:.6rem;opacity:.35;margin-top:.4rem;letter-spacing:.05em">Cartografía: © Ministerio de Agricultura, Pesca y Alimentación · CC BY 4.0 · Fondo: Natural Earth</p>
     </div>
   </div>
 </header>

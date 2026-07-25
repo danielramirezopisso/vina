@@ -653,12 +653,15 @@ function enablePanZoom(mapId){
   const box = $(mapId), svg = box && box.querySelector("svg"); if(!svg) return;
   let drag = null;
   svg.addEventListener("pointerdown", e=>{
-    drag = {x:e.clientX, y:e.clientY, vb:svgVB(svg)};
-    svg.setPointerCapture(e.pointerId); svg.style.cursor="grabbing";
+    drag = {x:e.clientX, y:e.clientY, vb:svgVB(svg), pid:e.pointerId};
   });
   svg.addEventListener("pointermove", e=>{
     if(!drag) return;
-    if(Math.abs(e.clientX-drag.x)+Math.abs(e.clientY-drag.y) > 6) drag.moved = true;
+    if(!drag.moved){
+      if(Math.abs(e.clientX-drag.x)+Math.abs(e.clientY-drag.y) <= 6) return; // still a click, don't touch it
+      drag.moved = true;
+      svg.setPointerCapture(drag.pid); svg.style.cursor="grabbing";
+    }
     const r = svg.getBoundingClientRect(), k = drag.vb[2]/r.width;
     setVB(svg, clampVB([drag.vb[0]-(e.clientX-drag.x)*k, drag.vb[1]-(e.clientY-drag.y)*k, drag.vb[2], drag.vb[3]]));
   });
@@ -1141,6 +1144,6 @@ function cancelar(){suscripcion.activa=false;render("cuenta");toast("Suscripció
 /* sesión demo persistente: F5 no te echa */
 try{ if(sessionStorage.getItem("vina_demo")==="1") enter(); }catch(e){}
 </script>
-<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js").catch(()=>{})}</script>
+<script>console.log("%cVINA build 2.4 🍷","color:#7A2231;font-weight:bold");if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js").catch(()=>{})}</script>
 </body>
 </html>

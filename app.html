@@ -78,14 +78,16 @@ a{color:inherit}
 .do-wine .dw-r i{opacity:.45;font-style:italic}
 .do-chips{display:flex;gap:.4rem;flex-wrap:wrap}
 #doFichaMap{position:relative;width:100%}
-.do-portrait{display:flex;justify-content:center;padding:1.2rem 0}
+.do-portrait{display:flex;justify-content:center;padding:.2rem 0 0;position:relative}
 .do-portrait svg{width:88%;max-height:400px;height:auto;display:block;aspect-ratio:auto;
   filter:drop-shadow(0 18px 34px rgba(122,34,49,.28)) !important}
 .do-portrait .es{display:none}
 .do-portrait .zone{display:none}
 .do-portrait .zone.disc{display:inline;fill:#9E3A4C !important;stroke:#FFFFFF !important;stroke-width:1.2 !important}
-.ficha-bodega{fill:var(--dorado);stroke:#FFFFFF;stroke-width:1.6;vector-effect:non-scaling-stroke}
-.do-locator{position:absolute;right:0;bottom:0;width:126px;background:none;border:none;padding:0}
+.ficha-bodega{fill:#FFFFFF;stroke:var(--tinto);stroke-width:1.4;vector-effect:non-scaling-stroke;pointer-events:auto;cursor:pointer;transition:fill .15s}
+.ficha-bodega:hover{fill:var(--lima)}
+#fichaTip{pointer-events:none}
+.do-locator{position:static;width:150px;margin:1.6rem auto 0;background:none;border:none;padding:0;opacity:.9}
 .do-locator svg{filter:drop-shadow(0 6px 14px rgba(18,41,29,.2)) !important}
 .do-locator .zone{display:none}
 .do-locator .zone.disc{display:inline;fill:#9E3A4C !important;stroke:#9E3A4C !important;stroke-width:4 !important}
@@ -866,13 +868,29 @@ async function fichaMap(slug){
     p.classList.add("disc");
     const b = p.getBBox(), pad = Math.max(b.width, b.height) * .14;
     setVB(svg, [b.x-pad, b.y-pad, b.width+2*pad, b.height+2*pad]);
-    // gold dots: your wineries, in their real villages inside the shape
-    const r = (b.width + 2*pad) * .028;
+    // your wineries, tiny pins in their real villages
+    const vbw = b.width + 2*pad;
+    const tipEl = document.createElement("div");
+    tipEl.className = "map-tip"; tipEl.id = "fichaTip";
+    host.querySelector(".do-portrait").appendChild(tipEl);
     BODEGAS.filter(bd=>doSlug(bd.do)===slug).forEach(bd=>{
       const c = document.createElementNS("http://www.w3.org/2000/svg","circle");
       c.setAttribute("cx", bd.sx); c.setAttribute("cy", bd.sy);
-      c.setAttribute("r", Math.max(r, 3));
+      c.setAttribute("r", (vbw * .014).toFixed(2));
       c.setAttribute("class", "ficha-bodega");
+      c.addEventListener("mousemove", ev=>{
+        const box = host.querySelector(".do-portrait");
+        const r2 = box.getBoundingClientRect();
+        tipEl.style.opacity = 1;
+        tipEl.style.left = Math.min(ev.clientX - r2.left + 12, r2.width - 230) + "px";
+        tipEl.style.top  = (ev.clientY - r2.top + 12) + "px";
+        const ws = VINOS.filter(v=>v.bodega===bd.n);
+        tipEl.innerHTML = `<span class="t-status">${esc(bd.town)}</span><strong>${esc(bd.n)}</strong>`
+          + (ws.length
+              ? ws.map(v=>`${esc(v.n)} ${v.anio} ${v.rating?"· "+"🍷".repeat(v.rating):""}`).join("<br>")
+              : "Aún sin vinos catados de aquí");
+      });
+      c.addEventListener("mouseleave", ()=> tipEl.style.opacity = 0);
       svg.appendChild(c);
     });
   }

@@ -1,4 +1,4 @@
-const CACHE = "vina-v1";
+const CACHE = "vina-v2";
 const CORE = [".", "index.html", "app.html", "dos-map.svg", "manifest.webmanifest", "icon-192.png", "icon-512.png"];
 
 self.addEventListener("install", e => {

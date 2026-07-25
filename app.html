@@ -77,7 +77,20 @@ a{color:inherit}
 .do-wine .dw-r{font-size:.7rem}
 .do-wine .dw-r i{opacity:.45;font-style:italic}
 .do-chips{display:flex;gap:.4rem;flex-wrap:wrap}
-#doFichaMap svg{aspect-ratio:1000/746;height:auto}
+#doFichaMap{position:relative;width:100%}
+.do-portrait{display:flex;justify-content:center;padding:1.2rem 0}
+.do-portrait svg{width:88%;max-height:400px;height:auto;display:block;aspect-ratio:auto;
+  filter:drop-shadow(0 18px 34px rgba(122,34,49,.28)) !important}
+.do-portrait .es{display:none}
+.do-portrait .zone{display:none}
+.do-portrait .zone.disc{display:inline;fill:#9E3A4C !important;stroke:#FFFFFF !important;stroke-width:1.2 !important}
+.ficha-bodega{fill:var(--dorado);stroke:#FFFFFF;stroke-width:1.6;vector-effect:non-scaling-stroke}
+.do-locator{position:absolute;right:0;bottom:0;width:126px;background:none;border:none;padding:0}
+.do-locator svg{filter:drop-shadow(0 6px 14px rgba(18,41,29,.2)) !important}
+.do-locator .zone{display:none}
+.do-locator .zone.disc{display:inline;fill:#9E3A4C !important;stroke:#9E3A4C !important;stroke-width:4 !important}
+.do-locator .es{fill:#F6F1E5 !important;stroke:#CFC5B1 !important;stroke-width:1.4 !important}
+.loc-dot{fill:rgba(158,58,76,.25);stroke:#9E3A4C;stroke-width:3;vector-effect:non-scaling-stroke}
 .realmap .es{fill:#FBF8F1 !important;stroke:#C6BBA6 !important}
 .realmap .zone{fill:#DDD3C3 !important;stroke:#FFFFFF !important;stroke-width:.8 !important}
 .realmap .zone:hover{filter:brightness(1.06) saturate(1.2)}
@@ -843,15 +856,37 @@ function rateDO(i,x){
 }
 async function fichaMap(slug){
   const host = $("doFichaMap"); if(!host) return;
-  try{ host.innerHTML = await getMapText(); }catch(e){ host.innerHTML=""; return; }
-  const svg = host.querySelector("svg");
-  svg.querySelectorAll("title").forEach(t=>t.remove());
-  svg.style.pointerEvents = "none";
+  let txt; try{ txt = await getMapText(); }catch(e){ host.innerHTML=""; return; }
+  host.innerHTML = `<div class="do-portrait">${txt}</div><div class="do-locator">${txt}</div>`;
+  const [svg, loc] = host.querySelectorAll("svg");
+  [svg, loc].forEach(x=>{ x.querySelectorAll("title").forEach(t=>t.remove()); x.style.pointerEvents="none"; });
+  // main portrait: zoom to the DO
   const p = svg.querySelector("#"+CSS.escape(slug));
   if(p){
     p.classList.add("disc");
-    const b = p.getBBox(), pad = Math.max(b.width, b.height) * .5;
-    setVB(svg, fitAspect([b.x-pad, b.y-pad, b.width+2*pad, b.height+2*pad], 1000/746));
+    const b = p.getBBox(), pad = Math.max(b.width, b.height) * .14;
+    setVB(svg, [b.x-pad, b.y-pad, b.width+2*pad, b.height+2*pad]);
+    // gold dots: your wineries, in their real villages inside the shape
+    const r = (b.width + 2*pad) * .028;
+    BODEGAS.filter(bd=>doSlug(bd.do)===slug).forEach(bd=>{
+      const c = document.createElementNS("http://www.w3.org/2000/svg","circle");
+      c.setAttribute("cx", bd.sx); c.setAttribute("cy", bd.sy);
+      c.setAttribute("r", Math.max(r, 3));
+      c.setAttribute("class", "ficha-bodega");
+      svg.appendChild(c);
+    });
+  }
+  // corner locator: all of Spain with a "you are here"
+  const lp = loc.querySelector("#"+CSS.escape(slug));
+  if(lp){
+    lp.classList.add("disc");
+    const b = lp.getBBox();
+    const dot = document.createElementNS("http://www.w3.org/2000/svg","circle");
+    dot.setAttribute("cx", b.x + b.width/2);
+    dot.setAttribute("cy", b.y + b.height/2);
+    dot.setAttribute("r", 16);
+    dot.setAttribute("class", "loc-dot");
+    loc.appendChild(dot);
   }
 }
 function openDO(i, from){

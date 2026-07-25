@@ -3,6 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#12291D">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="VINA">
 <title>VINA — Tu área personal</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -177,7 +182,8 @@ main{max-width:1160px;margin:0 auto;padding:2.6rem 4vw 5rem}
 
 /* wine detail */
 .detail-grid{display:grid;grid-template-columns:280px 1fr;gap:2.6rem;align-items:start}
-.detail-bottle{background:var(--verde);border-radius:2px;padding:2.4rem 1rem;display:flex;justify-content:center}
+.detail-bottle{padding:2.4rem 1rem;display:flex;justify-content:center;align-items:flex-start}
+.detail-bottle svg{filter:drop-shadow(0 16px 28px rgba(18,41,29,.22))}
 .detail-bottle svg{height:380px}
 .detail-info h2{font-size:2.2rem;color:var(--verde);line-height:1.1}
 .detail-info .d-meta{font-size:.9rem;opacity:.7;margin:.5rem 0 1.2rem}
@@ -983,5 +989,6 @@ function cancelar(){suscripcion.activa=false;render("cuenta");toast("Suscripció
 /* sesión demo persistente: F5 no te echa */
 try{ if(sessionStorage.getItem("vina_demo")==="1") enter(); }catch(e){}
 </script>
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js").catch(()=>{})}</script>
 </body>
 </html>

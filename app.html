@@ -49,7 +49,19 @@ a{color:inherit}
 .topbar{background:var(--verde);color:var(--crema);padding:1rem 4vw;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;position:sticky;top:0;z-index:40}
 .topbar .logo{font-family:'Fraunces',serif;font-size:1.25rem;letter-spacing:.3em;text-decoration:none}
 .topbar .logo span{color:var(--lima)}
-.realmap svg{width:100%;height:auto;display:block;aspect-ratio:1000/746;filter:drop-shadow(0 14px 30px rgba(18,41,29,.18))}
+.realmap{position:relative}
+.realmap svg{width:100%;height:auto;display:block;aspect-ratio:1000/746;filter:drop-shadow(0 14px 30px rgba(18,41,29,.18));touch-action:none;cursor:grab}
+.realmap .zone.hl{filter:brightness(1.12) saturate(1.3);stroke:var(--verde) !important;stroke-width:2 !important}
+.map-ctrls{position:absolute;right:.4rem;bottom:.4rem;display:flex;flex-direction:column;gap:.35rem;z-index:5}
+.map-ctrls button{width:34px;height:34px;border-radius:50%;border:1px solid rgba(18,41,29,.25);background:var(--card);color:var(--verde);font-size:1.05rem;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(18,41,29,.12)}
+.map-ctrls button:hover{background:var(--verde);color:var(--crema)}
+.wine-filters{display:flex;gap:.4rem;flex-wrap:wrap;align-items:center;margin:0 0 1.2rem}
+.wine-filters select{border:1px solid rgba(18,41,29,.25);background:var(--card);color:var(--verde);border-radius:999px;padding:.36rem .8rem;font-size:.68rem;letter-spacing:.06em;font-family:inherit}
+.wine-filters button{background:transparent;border:1px solid rgba(18,41,29,.25);color:var(--verde);border-radius:999px;padding:.36rem .8rem;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .2s}
+.wine-filters button:hover{background:rgba(18,41,29,.06)}
+.wine-filters button.active{background:var(--verde);color:var(--crema);border-color:var(--verde);font-weight:600}
+.u-rating{margin-top:.5rem;font-size:.78rem;font-weight:700;color:var(--tinto)}
+.u-rating span{display:block;font-weight:400;font-size:.6rem;opacity:.55;margin-top:.1rem}
 .realmap .es{fill:#FBF8F1 !important;stroke:#C6BBA6 !important}
 .realmap .zone{fill:#DDD3C3 !important;stroke:#FFFFFF !important;stroke-width:.8 !important}
 .realmap .zone:hover{filter:brightness(1.06) saturate(1.2)}
@@ -66,7 +78,6 @@ a{color:inherit}
 .b-node{fill:var(--dorado);stroke:#fff;stroke-width:1.6;vector-effect:non-scaling-stroke;cursor:pointer;transition:r .15s}
 .b-node:hover{r:9}
 .realmap .zone.disc{fill:#9E3A4C !important;stroke:#FFFFFF !important;stroke-width:.8 !important}
-.realmap .zone.doca.disc{stroke:var(--dorado) !important;stroke-width:1.8 !important}
 .tabs{display:flex;gap:.2rem;flex-wrap:wrap}
 .tabs button{background:none;border:none;color:var(--crema);opacity:.7;padding:.5rem .9rem;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;border-bottom:2px solid transparent;transition:opacity .25s,border-color .25s}
 .tabs button:hover{opacity:1}
@@ -187,10 +198,7 @@ main{max-width:1160px;margin:0 auto;padding:2.6rem 4vw 5rem}
 .uva.b .u-dot{background:radial-gradient(circle at 35% 30%,#E8DFA8,#C7A94B)}
 .uva h3{font-size:1.1rem;color:var(--verde)}
 .uva .u-sub{font-size:.68rem;opacity:.6}
-.uva.locked{
-  opacity:.6;
-  background:repeating-linear-gradient(-45deg,var(--crema-2),var(--crema-2) 8px,var(--card) 8px,var(--card) 16px);
-}
+.uva.locked{opacity:.6;background:var(--crema-2);border-style:dashed}
 .uva.locked .u-dot{background:var(--crema-2);color:var(--gris)}
 .uva .u-wines{
   position:absolute;inset:0;background:var(--verde);color:var(--crema);
@@ -198,7 +206,10 @@ main{max-width:1160px;margin:0 auto;padding:2.6rem 4vw 5rem}
   font-size:.72rem;line-height:1.5;opacity:0;transition:opacity .25s;pointer-events:none;
 }
 .uva .u-wines .uw-t{font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:var(--lima);font-weight:600;margin-bottom:.3rem}
-.uva:not(.locked):hover .u-wines,.uva:not(.locked):focus-within .u-wines{opacity:1}
+.uva:not(.locked):hover .u-wines,.uva:not(.locked):focus-within .u-wines{opacity:1;pointer-events:auto}
+.uw-link{display:block;cursor:pointer;text-decoration:underline;text-underline-offset:2px;margin:.12rem 0}
+.uw-link:hover{color:var(--lima)}
+.uw-hint{display:block;font-size:.56rem;opacity:.55;margin-top:.45rem}
 
 /* ---------- bodegas ---------- */
 .bodega-list{display:flex;flex-direction:column;gap:.6rem}
@@ -519,13 +530,14 @@ function pViaje(){
         <button class="btn btn-outline btn-sm" style="margin-top:1rem" onclick="goTab('cuenta')">Gestionar suscripción</button>
       </div>
     </div>
-  </div>`;
+  </div>
+  <div class="mono-note" style="margin-top:1.6rem">🔮 <strong>¿Y después de la etapa 12?</strong> Eliges tu segundo viaje: <em>Coupages</em> — mezclas de dos uvas, y el juego de adivinar cuáles — o un <em>deep dive</em> en la DO que tú quieras: ¿Priorat en profundidad? ¿Rioja de pueblo en pueblo? ¿Rías Baixas salina? El viaje no se acaba — se ramifica.</div>`;
 }
 
 /* =============== TUS DOs =============== */
 function pDOs(){
   const disc=DOS.filter(d=>d.disc).length;
-  const lista=shuffled(DOS);
+  const lista=[...shuffled(DOS.filter(d=>d.disc)), ...shuffled(DOS.filter(d=>!d.disc))];
   return `
   <div class="page-head"><span class="eyebrow">Tus DOs</span><h2>${disc} de 76 denominaciones descubiertas</h2>
   <p>El mapa oficial de las zonas vitícolas de España, frontera a frontera. En granate, las que ya se han teñido de vino; en piedra, todo lo que te queda por delante.</p></div>
@@ -542,7 +554,7 @@ function pDOs(){
     </div>
     <div class="do-list">
       ${lista.map(d=>`
-        <div class="do-item ${d.disc?"":"locked"}">
+        <div class="do-item ${d.disc?"":"locked"}" ${d.disc?`onmouseenter="hlDO('${doSlug(d.n)}',1)" onmouseleave="hlDO('${doSlug(d.n)}',0)"`:""}>
           <div><div class="d-name">${d.disc?esc(d.n):"?????"}</div>
           <span style="font-size:.7rem;opacity:.6">${esc(d.reg)}</span></div>
           ${d.disc?`<span class="pill pill-lima">${esc(d.fecha)}</span>`:`<span class="pill pill-gris">Por descubrir</span>`}
@@ -586,6 +598,46 @@ function fitAspect(vb, ar){ // expand the window to the svg's aspect ratio, cent
   else { const nw=h*ar; x-=(nw-w)/2; w=nw; }
   return [x,y,w,h];
 }
+function hlDO(slug, on){
+  const p = document.getElementById(slug);
+  if(p) p.classList.toggle("hl", !!on);
+}
+function svgVB(svg){ return svg.getAttribute("viewBox").split(/\s+/).map(Number); }
+function setVB(svg, vb){ svg.setAttribute("viewBox", vb.map(v=>v.toFixed(1)).join(" ")); }
+function clampVB(vb){
+  let [x,y,w,h] = vb;
+  w = Math.min(Math.max(w, 70), 1000); h = w*746/1000;
+  x = Math.min(Math.max(x, -w*.2), 1000 - w*.8);
+  y = Math.min(Math.max(y, -h*.2), 746 - h*.8);
+  return [x,y,w,h];
+}
+function zoomStep(mapId, f){
+  const svg = $(mapId) && $(mapId).querySelector("svg"); if(!svg) return;
+  const [x,y,w,h] = svgVB(svg);
+  const nw = w*f, nh = h*f;
+  setVB(svg, clampVB([x+(w-nw)/2, y+(h-nh)/2, nw, nh]));
+}
+function enablePanZoom(mapId){
+  const box = $(mapId), svg = box && box.querySelector("svg"); if(!svg) return;
+  let drag = null;
+  svg.addEventListener("pointerdown", e=>{
+    drag = {x:e.clientX, y:e.clientY, vb:svgVB(svg)};
+    svg.setPointerCapture(e.pointerId); svg.style.cursor="grabbing";
+  });
+  svg.addEventListener("pointermove", e=>{
+    if(!drag) return;
+    if(Math.abs(e.clientX-drag.x)+Math.abs(e.clientY-drag.y) > 6) drag.moved = true;
+    const r = svg.getBoundingClientRect(), k = drag.vb[2]/r.width;
+    setVB(svg, clampVB([drag.vb[0]-(e.clientX-drag.x)*k, drag.vb[1]-(e.clientY-drag.y)*k, drag.vb[2], drag.vb[3]]));
+  });
+  const end = ()=>{
+    if(drag && drag.moved){ svg.dataset.dragged="1"; setTimeout(()=>{ delete svg.dataset.dragged; }, 120); }
+    drag=null; svg.style.cursor="grab";
+  };
+  svg.addEventListener("pointerup", end); svg.addEventListener("pointercancel", end);
+  box.insertAdjacentHTML("beforeend",
+    `<div class="map-ctrls"><button title="Acercar" onclick="zoomStep('${mapId}',0.7)">＋</button><button title="Alejar" onclick="zoomStep('${mapId}',1.45)">−</button></div>`);
+}
 function zoomTo(svg, vb){
   if(!svg) return;
   vb = fitAspect(vb, 1000/746);
@@ -606,7 +658,9 @@ async function initMap(){
   }catch(e){ box.innerHTML = '<p style="padding:2rem;opacity:.6">El mapa no ha podido cargarse.</p>'; return; }
   const byId = {};
   DOS.forEach(d=>{ byId[doSlug(d.n)] = d; });
+  box.querySelectorAll("svg title").forEach(t=>t.remove());
   buildZoomChips("mapZoom","realMap");
+  enablePanZoom("realMap");
   box.querySelectorAll("path.zone").forEach(pz=>{
     const d = byId[pz.id];
     if(d && d.disc) pz.classList.add("disc");
@@ -622,6 +676,18 @@ async function initMap(){
         : `<span class="t-status" style="color:var(--gris)">Por descubrir${crown}</span><strong>?????</strong>${isDOCa?"Una de las dos joyas de la corona española":"Sigue el viaje para revelarla"}`;
     });
     pz.addEventListener("mouseleave", ()=> tip.style.opacity = 0);
+    pz.addEventListener("click", ()=>{
+      const svg = pz.closest("svg");
+      if(svg && svg.dataset.dragged) return;           // it was a pan, not a click
+      if(d && d.disc){
+        VF = {do:d.n, tipo:"", sort:""};
+        goTab("vinos");
+        toast(`🍷 Tus vinos de ${d.n}`);
+        window.scrollTo({top:0,behavior:"smooth"});
+      } else {
+        toast("????? · Sigue el viaje para revelarla 🔒");
+      }
+    });
   });
 }
 
@@ -631,12 +697,29 @@ function copas(i,rating,readonly){
     ${[1,2,3,4,5].map(s=>`<button class="${rating>=s?"on":""}" ${readonly?"":`onclick="event.stopPropagation();rate(${i},${s})"`} aria-label="${s} copas">🍷</button>`).join("")}
   </div>`;
 }
+let VF = {do:"", tipo:"", sort:""};
+function setVF(k,v){ VF[k]=v; render("vinos"); }
 function pVinos(){
-  const orden=shuffled(VINOS.map((v,i)=>i));
+  let orden=shuffled(VINOS.map((v,i)=>i));
+  orden = orden.filter(i=>(!VF.do || VINOS[i].do===VF.do) && (!VF.tipo || VINOS[i].tipo===VF.tipo));
+  if(VF.sort==="rating") orden.sort((a,b)=>(VINOS[b].rating||0)-(VINOS[a].rating||0));
+  const dos=[...new Set(VINOS.map(v=>v.do))];
+  const showLocked = !VF.do && !VF.tipo && !VF.sort;
   return `
   <div class="page-head"><span class="eyebrow">Tus Vinos</span><h2>${VINOS.length} vinos probados · 2 en camino</h2>
   <p>Tu colección crece con cada entrega. Entra en cada botella para ver su ficha completa y su perfil — y valórala con copas para dar forma a tu paladar.</p></div>
+  <div class="wine-filters">
+    <select onchange="setVF('do',this.value)">
+      <option value="">Todas las DOs</option>
+      ${dos.map(d=>`<option value="${esc(d)}" ${VF.do===d?"selected":""}>${esc(d)}</option>`).join("")}
+    </select>
+    <button class="${VF.tipo===""?"active":""}" onclick="setVF('tipo','')">Todos</button>
+    <button class="${VF.tipo==="tinto"?"active":""}" onclick="setVF('tipo','tinto')">Tinto</button>
+    <button class="${VF.tipo==="blanco"?"active":""}" onclick="setVF('tipo','blanco')">Blanco</button>
+    <button class="${VF.sort?"active":""}" onclick="setVF('sort',VF.sort?'':'rating')" title="Ordenar por tu valoración">🍷 Mejor valorados</button>
+  </div>
   <div class="wine-grid">
+    ${orden.length?"":`<p style="opacity:.55;grid-column:1/-1">Ningún vino con esos filtros… aún. El viaje sigue 🍷</p>`}
     ${orden.map(i=>{const v=VINOS[i];return `
       <div class="wine-card" role="button" tabindex="0" onclick="openWine(${i})" onkeydown="if(event.key==='Enter')openWine(${i})">
         <div class="mini-bottle">${bottleSVG(v,125,true)}</div>
@@ -646,8 +729,8 @@ function pVinos(){
         ${copas(i,v.rating,true)}
         <span class="w-open">Ver ficha →</span>
       </div>`}).join("")}
-    <div class="wine-card locked"><span class="q">?</span><p><strong>Etapa 05</strong><br>Se revela el 1 de agosto</p></div>
-    <div class="wine-card locked"><span class="q">?</span><p><strong>Etapa 05</strong><br>Se revela el 1 de agosto</p></div>
+    ${showLocked?`<div class="wine-card locked"><span class="q">?</span><p><strong>Etapa 05</strong><br>Se revela el 1 de agosto</p></div>
+    <div class="wine-card locked"><span class="q">?</span><p><strong>Etapa 05</strong><br>Se revela el 1 de agosto</p></div>`:""}
   </div>
   <p class="demo-note">Demo — tus votos viven sólo en esta sesión</p>`;
 }
@@ -683,14 +766,14 @@ function rate(i,s){
 
 /* =============== TUS UVAS =============== */
 function vinosConUva(nombre){
-  return VINOS.filter(v=>v.uvas.includes(nombre)).map(v=>`${v.n} ${v.anio} (${v.do})`);
+  return VINOS.map((v,i)=>({v,i})).filter(x=>x.v.uvas.includes(nombre));
 }
 function pUvas(){
   const d=UVAS.filter(u=>u.disc).length;
   const lista=shuffled(UVAS);
   return `
   <div class="page-head"><span class="eyebrow">Tus Uvas</span><h2>${d} de ${UVAS.length} variedades descubiertas</h2>
-  <p>En este primer viaje todos los vinos son 100% de una sola uva — así aprendes a reconocerlas una a una. Pasa el ratón sobre una uva descubierta para ver en qué vino la probaste.</p></div>
+  <p>En este primer viaje todos los vinos son 100% de una sola uva — así aprendes a reconocerlas una a una. Pasa el ratón sobre una uva descubierta para ver en qué vino la probaste. <strong>La nota de cada uva</strong> es la media de las copas que has dado a tus vinos de esa variedad — tu paladar, hablando en datos.</p></div>
   <div class="uva-grid">
     ${lista.map(u=>{
       const w=u.disc?vinosConUva(u.n):[];
@@ -699,10 +782,41 @@ function pUvas(){
         <div class="u-dot">${u.disc?"🍇":"?"}</div>
         <h3>${u.disc?esc(u.n):"?????"}</h3>
         <span class="u-sub">${u.disc?esc(u.sub||(u.tipo==="t"?"Tinta":"Blanca")):(u.tipo==="t"?"Tinta · por descubrir":"Blanca · por descubrir")}</span>
-        ${u.disc?`<div class="u-wines"><span class="uw-t">La probaste en</span>${w.map(esc).join("<br>")}</div>`:""}
+        ${(()=>{ if(!u.disc) return "";
+          const rated=VINOS.filter(v=>v.uvas.includes(u.n)&&v.rating>0);
+          if(!rated.length) return `<div class="u-rating" style="color:var(--gris)">— <span>aún sin valorar</span></div>`;
+          const avg=rated.reduce((a,v)=>a+v.rating,0)/rated.length;
+          return `<div class="u-rating">🍷 ${avg.toFixed(1)} <span>media de ${rated.length} vino${rated.length>1?"s":""} tuyo${rated.length>1?"s":""}</span></div>`;})()}
+        ${u.disc?`<div class="u-wines"><span class="uw-t">La probaste en</span>${w.map(x=>`<span class="uw-link" onclick="event.stopPropagation();openWine(${x.i})">${esc(x.v.n)} ${x.v.anio} (${esc(x.v.do)})</span>`).join("")}<span class="uw-hint">— toca un vino para abrir su ficha —</span></div>`:""}
       </div>`}).join("")}
   </div>
+  ${paladarCard()}
   <p class="section-note">💡 ¿Sabías que la Tinta del País de Ribera del Duero y el Tempranillo de Rioja son la misma uva? Mismo ADN, carácter distinto. Eso es exactamente lo que estás aprendiendo a notar.</p>`;
+}
+
+function paladarCard(){
+  const rated = VINOS.filter(v=>v.rating>0);
+  if(rated.length < 2) return "";
+  const gr = {};
+  rated.forEach(v=>v.uvas.forEach(u=>{ (gr[u]=gr[u]||[]).push(v.rating); }));
+  const grAvg = Object.entries(gr).map(([n,a])=>({n, avg:a.reduce((x,y)=>x+y,0)/a.length}))
+    .sort((a,b)=>b.avg-a.avg);
+  const top = grAvg[0];
+  const media = a => a.length ? a.reduce((x,v)=>x+v.rating,0)/a.length : null;
+  const at = media(rated.filter(v=>v.tipo==="tinto")), ab = media(rated.filter(v=>v.tipo==="blanco"));
+  let tipoLine = "";
+  if(at!=null && ab!=null){
+    tipoLine = Math.abs(at-ab) < .4
+      ? `Tintos y blancos te convencen por igual (${at.toFixed(1)} vs ${ab.toFixed(1)}).`
+      : at > ab
+        ? `De momento eres más de tintos (${at.toFixed(1)} de media vs ${ab.toFixed(1)} de los blancos).`
+        : `De momento eres más de blancos (${ab.toFixed(1)} de media vs ${at.toFixed(1)} de los tintos).`;
+  }
+  const dims = {}; let wsum = 0;
+  rated.forEach(v=>{ wsum += v.rating; Object.entries(v.perfil).forEach(([k,val])=>dims[k]=(dims[k]||0)+val*v.rating); });
+  const t2 = Object.entries(dims).map(([k,v])=>({k, v:v/wsum})).sort((a,b)=>b.v-a.v)
+    .slice(0,2).map(d=>PERFIL_LABELS[d.k].toLowerCase());
+  return `<div class="mono-note" style="margin-top:1.6rem">🧬 <strong>Tu paladar, primeras señales</strong> — calculado con las copas de tus ${rated.length} vinos valorados: tu uva favorita hoy es <strong>${esc(top.n)}</strong> (${top.avg.toFixed(1)} 🍷 de media). ${tipoLine} Y por perfil, te tiran los vinos con <strong>${t2.join(" y ")}</strong>. Cada voto afina este retrato — y algún día decidirá qué botellas te mandamos.</div>`;
 }
 
 /* =============== TUS BODEGAS =============== */
@@ -734,7 +848,9 @@ async function initBodegaMap(){
   if(!box) return;
   try{ box.innerHTML = await getMapText(); }
   catch(e){ box.innerHTML = '<p style="padding:2rem;opacity:.6">El mapa no ha podido cargarse.</p>'; return; }
+  box.querySelectorAll("svg title").forEach(t=>t.remove());
   buildZoomChips("mapZoomB","realMapB");
+  enablePanZoom("realMapB");
   const svg = box.querySelector("svg");
   const myDOs = new Set(BODEGAS.map(b=>doSlug(b.do)));
   svg.querySelectorAll("path.zone").forEach(pz=>{ if(myDOs.has(pz.id)) pz.classList.add("has-bodega"); });
